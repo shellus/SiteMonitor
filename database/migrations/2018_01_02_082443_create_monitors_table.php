@@ -4,6 +4,10 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
+/**
+ * 监控任务
+ * Class CreateMonitorsTable
+ */
 class CreateMonitorsTable extends Migration
 {
     /**
@@ -19,7 +23,7 @@ class CreateMonitorsTable extends Migration
             $table->string('title');
             $table->text('request_url');
             $table->text('request_method');
-            $table->text('request_headers');
+            $table->text('request_headers'); // 不包含首行
             $table->unsignedInteger('request_interval_second');
 
             $table->string('match_type'); // include / not_included / http_status_code / not_http_status_code
