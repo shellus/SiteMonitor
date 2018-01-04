@@ -24,9 +24,12 @@ class CreateMonitorsTable extends Migration
             $table->text('request_url');
             $table->text('request_method');
             $table->text('request_headers'); // 不包含首行
+            $table->text('request_body');
+
             $table->unsignedInteger('request_interval_second');
 
-            $table->string('match_type'); // include / not_included / http_status_code / not_http_status_code
+            $table->string('match_type'); // include / http_status_code / timeout
+            $table->boolean('match_reverse')->default(false); // 相反匹配，例如timeout 翻转的话，就是如果响应时间快于x毫秒，则通知
             $table->string('match_content'); // 内容或状态吗
             $table->timestamps();
 
