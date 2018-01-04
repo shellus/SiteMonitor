@@ -9,8 +9,12 @@
 namespace App\Service;
 
 
+use App\Jobs\MonitorJob;
+use App\Mail\MonitorNotice;
 use App\Monitor;
 use App\Snapshot;
+use App\User;
+use Carbon\Carbon;
 
 class MonitorService
 {
@@ -24,13 +28,15 @@ class MonitorService
         return true;
     }
     /**
-     * 讲一个监控任务加入列队，会自动设置
+     * 将一个监控任务加入列队，会自动设置延迟
+     * 注意：此方法会被MonitorJob递归调用
      * @param Monitor $monitor
      * @return void
      */
     static public function joinQueue(Monitor $monitor)
     {
-
+        $time = Carbon::now()->addSecond($monitor->request_interval_second);
+        dispatch((new MonitorJob($monitor))->delay($time));
     }
 
     /**
@@ -87,11 +93,10 @@ class MonitorService
         $snapshot->headers = $headers;
         $snapshot->body_content = $body;
 
-        $snapshot->time_total = $curlInfo['total_time'];
+        $snapshot->time_total = bcmul($curlInfo['total_time'], 1000, 3);
         $snapshot->time_dns = $curlInfo['namelookup_time'];
         $snapshot->time_connection = $curlInfo['connect_time'];
         $snapshot->time_transport = 0;
-
         if ($curlErrorNo !== 0) {
             $snapshot->is_error = true;
         }
@@ -108,4 +113,13 @@ class MonitorService
     }
 
 
+    static public function handleSnapshot(Snapshot $snapshot){
+        if (!$snapshot->is_notice){
+            return;
+        }
+        /** @var User $user */
+        $user = User::findOrFail($snapshot->monitor->user_id);
+        \Mail::to($user)->send(new MonitorNotice($snapshot));
+        \Log::info("完成一次快照，ID:[$snapshot->id]");
+    }
 }

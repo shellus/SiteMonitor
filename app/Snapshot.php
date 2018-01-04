@@ -36,6 +36,7 @@ use Illuminate\Database\Eloquent\Model;
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Snapshot whereTimeDns($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Snapshot whereTimeTotal($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Snapshot whereTimeTransport($value)
+ * @property-read \App\Monitor $monitor
  */
 class Snapshot extends Model
 {
@@ -49,5 +50,9 @@ class Snapshot extends Model
         is_null($this->time_dns) && $this->time_dns=0;
         is_null($this->time_transport) && $this->time_transport=0;
 
+    }
+    public function monitor()
+    {
+        return $this->belongsTo('App\Monitor');
     }
 }
