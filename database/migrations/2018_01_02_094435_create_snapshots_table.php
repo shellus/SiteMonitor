@@ -33,11 +33,12 @@ class CreateSnapshotsTable extends Migration
             $table->unsignedInteger('time_transport');
             // 暂未设计“已通知”字段，因为，通知一旦发起，是保证成功的，即使未成功，也是放在队列中和失败队列任务中。暂不考虑永远失败的情况。
 
-
             $table->timestamps();
 
             $table->foreign('monitor_id')->references('id')->on('monitors');
         });
+
+	    \DB::statement('ALTER TABLE snapshots MODIFY body_content LONGBLOB NOT NULL;');
 
     }
 
