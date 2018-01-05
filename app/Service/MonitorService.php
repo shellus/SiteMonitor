@@ -94,9 +94,10 @@ class MonitorService
         $snapshot->body_content = $body;
 
         $snapshot->time_total = bcmul($curlInfo['total_time'], 1000, 3);
-        $snapshot->time_dns = $curlInfo['namelookup_time'];
-        $snapshot->time_connection = $curlInfo['connect_time'];
-        $snapshot->time_transport = 0;
+        $snapshot->time_dns = bcmul($curlInfo['namelookup_time'], 1000, 3);
+        $snapshot->time_connection = bcmul($curlInfo['connect_time'], 1000, 3);
+        $snapshot->time_transport = bcmul($curlInfo['pretransfer_time'], 1000, 3);
+
         if ($curlErrorNo !== 0) {
             $snapshot->is_error = true;
         }
