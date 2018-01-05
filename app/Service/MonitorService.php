@@ -15,6 +15,7 @@ use App\Monitor;
 use App\Snapshot;
 use App\User;
 use Carbon\Carbon;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 
 class MonitorService
 {
@@ -27,6 +28,7 @@ class MonitorService
         }
         return true;
     }
+
     /**
      * 将一个监控任务加入列队，会自动设置延迟
      * 注意：此方法会被MonitorJob递归调用
@@ -53,7 +55,6 @@ class MonitorService
         curl_setopt($curlHandle, CURLOPT_HEADER, true); // 输出header
         curl_setopt($curlHandle, CURLOPT_FOLLOWLOCATION, true); // 跟随跳转
         curl_setopt($curlHandle, CURLOPT_MAXREDIRS, 5); // 跳转次数
-
 
 
         curl_setopt($curlHandle, CURLOPT_URL, $monitor->request_url);
@@ -104,7 +105,27 @@ class MonitorService
         $snapshot->error_message = "curl error[$curlErrorNo]: " . $curlErrorMessage;
 
         if ($snapshot->is_error) {
-            $snapshot->is_notice = true;
+            $snapshot->is_match = true;
+        } else {
+            $hit = false;
+            switch ($monitor->match_type) {
+                case "include":
+                    strpos($body, $monitor->match_content) !== false && $hit = true;
+                    break;
+                case "http_status_code":
+                    $snapshot->http_status_code == $monitor->match_content && $hit = true;
+                    break;
+                case "timeout":
+                    $curlErrorNo===CURLE_OPERATION_TIMEDOUT && $hit = true;
+                    break;
+                default:
+                    throw new \Exception("monitor match_type[{$monitor->match_type}] not found!");
+                    break;
+            }
+            if ($monitor->match_reverse) {
+                $hit = !$hit;
+            }
+            $snapshot->is_match = $hit;
         }
 
         $snapshot->buildFull();
@@ -114,13 +135,42 @@ class MonitorService
     }
 
 
-    static public function handleSnapshot(Snapshot $snapshot){
-        if (!$snapshot->is_notice){
-            return;
-        }
+    /**
+     * 决定要不要通知，包括通知文本的生成都在这里
+     * @param Snapshot $snapshot
+     */
+    static public function handleSnapshot(Snapshot $snapshot)
+    {
         /** @var User $user */
         $user = User::findOrFail($snapshot->monitor->user_id);
-        \Mail::to($user)->send(new MonitorNotice($snapshot));
-        \Log::info("完成一次快照，ID:[$snapshot->id]");
+
+        // 取出上一个快照，判断是否变化，如果没变化，就直接return了
+        try {
+            $perSnapshot = Snapshot::whereMonitorId($snapshot->monitor_id)->where('id', '<', $snapshot->id)->orderBy('id', 'desc')->firstOrFail();
+            if ($perSnapshot->is_match == $snapshot->is_match) {
+                // 如果这次有问题，上次也有问题，那就不通知
+                // 如果这次没问题，上次也没问题，那也不通知
+                // 只有状态改变，才通知。没毛病老铁。
+                var_dump("不通知，谢谢");
+                return;
+            }
+        } catch (ModelNotFoundException $e) {
+            // 如果第一次，且没有问题，就不通知
+            if (!$snapshot->is_match) {
+                return;
+            }
+        }
+
+        if (!$snapshot->is_match) {
+            $messageText = "恢复正常";
+        } else {
+            if ($snapshot->is_error) {
+                $messageText = "请求错误，{$snapshot->error_message}";
+            } else {
+                $messageText = Monitor::parseMatchMessage($snapshot->monitor->match_type, $snapshot->monitor->match_reverse);
+            }
+        }
+
+        \Mail::to($user)->send(new MonitorNotice($messageText, $snapshot));
     }
 }

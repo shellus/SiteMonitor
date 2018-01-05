@@ -16,7 +16,7 @@ use Psy\Util\Str;
  * @property string $request_method
  * @property string $request_headers
  * @property int $request_interval_second
- * @property string $match_type include / not_included / http_status_code / not_http_status_code
+ * @property string $match_type
  * @property string $match_content
  * @property \Carbon\Carbon|null $created_at
  * @property \Carbon\Carbon|null $updated_at
@@ -39,6 +39,27 @@ use Psy\Util\Str;
 class Monitor extends Model
 {
     static public function generateTitle(){
-        return "M" . str_random(5);
+        return "M-" . str_pad(self::count(), 5, '0', STR_PAD_LEFT);
+    }
+    static public function parseMatchMessage($type, $reverse){
+        $statusText = "";
+        switch ($type){
+            case "include":
+                $statusText = "包含文本";
+                break;
+            case "http_status_code":
+                $statusText = "HTTP状态码";
+                break;
+            case "timeout":
+                $statusText = "请求超时";
+                break;
+            default:
+                throw new \Exception("Match Message type[{$type}] not found!");
+                break;
+        }
+        if ($reverse){
+            $statusText = "[反向]".$statusText;
+        }
+        return $statusText;
     }
 }

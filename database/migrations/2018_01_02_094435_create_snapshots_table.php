@@ -20,7 +20,7 @@ class CreateSnapshotsTable extends Migration
         Schema::create('snapshots', function (Blueprint $table) {
             $table->increments('id');
             $table->unsignedInteger('monitor_id');
-            $table->boolean('is_notice')->default(false); // 是否属于异常通知，例如包含内容已经找到，is_error为1的话，is_notice必定为1，因为错误肯定要提示的。
+            $table->boolean('is_match')->default(false); // 是否属于异常通知，例如包含内容已经找到，is_error为1的话，is_notice必定为1，因为错误肯定要提示的。
             $table->boolean('is_error')->default(false); // 是否请求错误，没有得到响应头的情况，都属于此类，包含 dns解析错误、TCP连接无法建立/响应前中断、得到的响应不符合HTTP规范等
             $table->text('error_message'); // 自定义拼合文本，人类可读
             $table->string('http_status_code');

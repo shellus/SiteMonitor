@@ -3,6 +3,8 @@
 namespace Tests\Feature;
 
 use App\Mail\TestEmail;
+use App\Service\MonitorService;
+use App\Snapshot;
 use App\User;
 use Tests\TestCase;
 use Illuminate\Foundation\Testing\WithFaker;
@@ -17,7 +19,7 @@ class EmailTest extends TestCase
      */
     public function testExample()
     {
-        \Mail::to(User::firstOrFail())->send(new TestEmail("你好"));
+        MonitorService::handleSnapshot(Snapshot::findOrFail(2));
         $this->assertTrue(true);
     }
 }

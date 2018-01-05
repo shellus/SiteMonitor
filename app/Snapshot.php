@@ -9,7 +9,7 @@ use Illuminate\Database\Eloquent\Model;
  *
  * @property int $id
  * @property int $monitor_id
- * @property int $is_notice
+ * @property int $is_match 通知是通知，有异常或者匹配中了就为1，至于发不发邮件通知，那是另一回事
  * @property int $is_error
  * @property string $error_message
  * @property string $http_status_code

@@ -12,14 +12,17 @@ class MonitorNotice extends Mailable
 {
     use Queueable, SerializesModels;
     protected $snapshot;
+    protected $statusText;
 
     /**
      * Create a new message instance.
      *
-     * @return void
+     * @param $statusText
+     * @param Snapshot $snapshot
      */
-    public function __construct(Snapshot $snapshot)
+    public function __construct($statusText, Snapshot $snapshot)
     {
+        $this->statusText = $statusText;
         $this->snapshot = $snapshot;
     }
 
@@ -30,6 +33,9 @@ class MonitorNotice extends Mailable
      */
     public function build()
     {
-        return $this->view('emails.monitor.notice')->with('snapshot', $this->snapshot);
+        return $this->view('emails.monitor.notice')
+            ->subject("SiteMonitor: {$this->statusText}")
+            ->with('statusText', $this->statusText)
+            ->with('snapshot', $this->snapshot);
     }
 }
