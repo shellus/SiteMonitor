@@ -18,7 +18,8 @@ class MonitorTest extends TestCase
     public function testExample()
     {
         $monitor = Monitor::firstOrFail();
-        MonitorService::request($monitor);
+	    $snapshot = MonitorService::request($monitor);
+	    MonitorService::handleSnapshot($snapshot);
         $this->assertTrue(true);
     }
 }
