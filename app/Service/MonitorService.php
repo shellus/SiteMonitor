@@ -104,28 +104,26 @@ class MonitorService
         }
         $snapshot->error_message = "curl error[$curlErrorNo]: " . $curlErrorMessage;
 
-        if ($snapshot->is_error) {
-            $snapshot->is_match = true;
-        } else {
-            $hit = false;
+        if (!$snapshot->is_error) {
+            $isMatch = false;
             switch ($monitor->match_type) {
                 case "include":
-                    strpos($body, $monitor->match_content) !== false && $hit = true;
+                    strpos($body, $monitor->match_content) !== false && $isMatch = true;
                     break;
                 case "http_status_code":
-                    $snapshot->http_status_code == $monitor->match_content && $hit = true;
+                    $snapshot->http_status_code == $monitor->match_content && $isMatch = true;
                     break;
                 case "timeout":
-                    $curlErrorNo===CURLE_OPERATION_TIMEDOUT && $hit = true;
+                    $curlErrorNo===CURLE_OPERATION_TIMEDOUT && $isMatch = true;
                     break;
                 default:
                     throw new \Exception("monitor match_type[{$monitor->match_type}] not found!");
                     break;
             }
             if ($monitor->match_reverse) {
-                $hit = !$hit;
+                $isMatch = !$isMatch;
             }
-            $snapshot->is_match = $hit;
+            $snapshot->is_match = $isMatch;
         }
 
         $snapshot->buildFull();
@@ -147,20 +145,21 @@ class MonitorService
         // 取出上一个快照，判断是否变化，如果没变化，就直接return了
         try {
             $perSnapshot = Snapshot::whereMonitorId($snapshot->monitor_id)->where('id', '<', $snapshot->id)->orderBy('id', 'desc')->firstOrFail();
-            if ($perSnapshot->is_match == $snapshot->is_match) {
-                // 如果这次有问题，上次也有问题，那就不通知
-                // 如果这次没问题，上次也没问题，那也不通知
-                // 只有状态改变，才通知。没毛病老铁。
-                var_dump("不通知，谢谢");
+            if ($perSnapshot->is_match == $snapshot->is_match && $perSnapshot->is_error == $snapshot->is_error) {
+                // 如果匹配状态没变化，且错误状态没变化，就不通知
                 return;
             }
         } catch (ModelNotFoundException $e) {
-            // 如果第一次，且没有问题，就不通知
-            if (!$snapshot->is_match) {
+            // 如果第一次，且没有匹配也没错误，就不通知
+            if (!$snapshot->is_match && !$snapshot->is_error) {
                 return;
             }
         }
 
+        // 四个状态
+        // $snapshot->is_match   $snapshot->is_error    !$snapshot->is_match   !$snapshot->is_error
+        // 匹配 未匹配 请求错误 错误恢复
+        // todo
         if (!$snapshot->is_match) {
             $messageText = "恢复正常";
         } else {
