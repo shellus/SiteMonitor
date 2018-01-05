@@ -2,7 +2,9 @@
 
 namespace App;
 
+use App\Monitor\Match\MatchBase;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Str;
 
 /**
  * App\Snapshot
@@ -55,4 +57,16 @@ class Snapshot extends Model
     {
         return $this->belongsTo('App\Monitor');
     }
+
+	/**
+	 * @return MatchBase
+	 * @throws \Exception
+	 */
+	public function getMatcher(){
+		$matchClass = "\\App\\Monitor\\Match\\".Str::ucfirst( Str::camel( $this->monitor->match_type."_match" ) );
+		if ( ! class_exists( $matchClass ) ) {
+			throw new \Exception( "monitor match_type[{$matchClass}] not found!" );
+		}
+		return new $matchClass($this);
+	}
 }

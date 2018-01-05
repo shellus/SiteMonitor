@@ -3,7 +3,6 @@
 namespace App;
 
 use Illuminate\Database\Eloquent\Model;
-use Psy\Util\Str;
 
 /**
  * App\Monitor
@@ -42,7 +41,6 @@ class Monitor extends Model
         return "M-" . str_pad(self::count(), 5, '0', STR_PAD_LEFT);
     }
     static public function parseMatchMessage($type, $reverse){
-        $statusText = "";
         switch ($type){
             case "include":
                 $statusText = "包含文本";
