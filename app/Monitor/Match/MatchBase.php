@@ -9,11 +9,14 @@
 namespace App\Monitor\Match;
 
 
+use App\Snapshot;
+
 class MatchBase
 {
     /** @var  $isMatch boolean 不包含反向检测 */
     protected $isMatch;
-    protected $matchReverse;
+    /** @var  Snapshot */
+    protected $snapshot;
 
     /**
      * @throws \Exception
@@ -34,7 +37,7 @@ class MatchBase
      */
     protected function checkReverse()
     {
-        if ($this->matchReverse) {
+        if ($this->snapshot->monitor->match_reverse) {
             return !$this->isMatch;
         }
         return $this->isMatch;
