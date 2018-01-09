@@ -42,17 +42,6 @@ use Illuminate\Support\Str;
  */
 class Snapshot extends Model
 {
-    //
-    public function buildFull(){
-        is_null($this->http_status_code) && $this->http_status_code=0;
-        is_null($this->headers) && $this->headers="";
-        is_null($this->body_content) && $this->body_content="";
-        is_null($this->time_total) && $this->time_total=0;
-        is_null($this->time_connection) && $this->time_connection=0;
-        is_null($this->time_dns) && $this->time_dns=0;
-        is_null($this->time_transport) && $this->time_transport=0;
-
-    }
     public function monitor()
     {
         return $this->belongsTo('App\Monitor');

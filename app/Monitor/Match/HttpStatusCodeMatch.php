@@ -16,23 +16,27 @@ use App\Snapshot;
  * Class HttpStatusCodeMatch
  * @package Monitor\Match
  */
-class HttpStatusCodeMatch extends MatchBase{
+class HttpStatusCodeMatch extends MatchBase
+{
 
-	protected $snapshot;
-	public function __construct(Snapshot $snapshot) {
-		$this->snapshot=$snapshot;
-		$this->isMatch = $this->snapshot->http_status_code=$this->snapshot->monitor->match_content;
-	}
+    protected $snapshot;
+
+    public function __construct(Snapshot $snapshot)
+    {
+        $this->snapshot = $snapshot;
+        $this->isMatch = $this->snapshot->http_status_code == $this->snapshot->monitor->match_content;
+    }
 
 
-	public function getMessage(){
-		$text = "HTTP状态代码";
-		if ($this->snapshot->monitor->match_reverse){
-			$text = $text."不等于";
-		}else{
-			$text = $text."等于";
-		}
-		$text = $text . $this->snapshot->http_status_code;
-		return $text;
-	}
+    public function getMessage()
+    {
+        $text = "HTTP状态代码";
+        if ($this->snapshot->monitor->match_reverse) {
+            $text = $text . "不等于";
+        } else {
+            $text = $text . "等于";
+        }
+        $text = $text . $this->snapshot->monitor->match_content;
+        return $text;
+    }
 }

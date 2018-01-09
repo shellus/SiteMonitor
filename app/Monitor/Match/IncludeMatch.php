@@ -15,23 +15,26 @@ use App\Snapshot;
  * Class IncludeMatch
  * @package Monitor\Match
  */
-class IncludeMatch extends MatchBase {
-	protected $snapshot;
+class IncludeMatch extends MatchBase
+{
+    protected $snapshot;
 
-	public function __construct( Snapshot $snapshot ) {
-		$this->snapshot = $snapshot;
-		$this->isMatch  = strpos( $this->snapshot->body_content, $this->snapshot->monitor->match_content ) !== false;
-	}
+    public function __construct(Snapshot $snapshot)
+    {
+        $this->snapshot = $snapshot;
+        $this->isMatch = strpos($this->snapshot->body_content, $this->snapshot->monitor->match_content) !== false;
+    }
 
-	public function getMessage() {
-		$text = "网页中";
-		if ( $this->snapshot->monitor->match_reverse ) {
-			$text = $text . "不包含";
-		} else {
-			$text = $text . "包含";
-		}
-		$text = $text . "[{$this->snapshot->monitor->match_content}]";
+    public function getMessage()
+    {
+        $text = "网页中";
+        if ($this->snapshot->monitor->match_reverse) {
+            $text = $text . "不包含";
+        } else {
+            $text = $text . "包含";
+        }
+        $text = $text . "[{$this->snapshot->monitor->match_content}]";
 
-		return $text;
-	}
+        return $text;
+    }
 }

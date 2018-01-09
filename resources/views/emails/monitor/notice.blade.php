@@ -9,7 +9,7 @@
         产生时间: {{ $snapshot->created_at }}<br>
         URL: {{ $snapshot->monitor->request_url }}<br>
         响应代码: {{ $snapshot->http_status_code }}<br>
-        耗费时间: {{ $snapshot->time_total }}
+        耗费时间: {{ $snapshot->time_total }} ms
     </div>
     恢复正常后，我们会及时通知您。
 </div>
