@@ -53,6 +53,11 @@ class MonitorService
      */
     static public function request(Monitor $monitor)
     {
+
+        $snapshot = new Snapshot();
+        $snapshot->monitor_id = $monitor->id;
+        $snapshot->saveOrFail();
+
         $curlHandle = curl_init();
 
         curl_setopt($curlHandle, CURLOPT_FORBID_REUSE, true); // 不重用TCP连接
@@ -79,8 +84,6 @@ class MonitorService
         $curlInfo = curl_getinfo($curlHandle);
 
 
-        $snapshot = new Snapshot();
-        $snapshot->monitor_id = $monitor->id;
         $curlErrorNo = curl_errno($curlHandle);
         $curlErrorMessage = curl_error($curlHandle);
 
