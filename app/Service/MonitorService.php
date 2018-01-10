@@ -74,6 +74,7 @@ class MonitorService
 
         $curlHandle = curl_init();
 
+        curl_setopt($curlHandle, CURLOPT_SAFE_UPLOAD, true); // 禁止body中使用@上传文件
         curl_setopt($curlHandle, CURLOPT_FORBID_REUSE, true); // 不重用TCP连接
         curl_setopt($curlHandle, CURLOPT_RETURNTRANSFER, true); // 返回数据，不输出
         curl_setopt($curlHandle, CURLOPT_HEADER, true); // 输出header
