@@ -64,24 +64,4 @@ class Monitor extends Model
     static public function generateTitle(){
         return "M-" . str_pad(self::count(), 5, '0', STR_PAD_LEFT);
     }
-    static public function parseMatchMessage($type, $reverse){
-        switch ($type){
-            case "include":
-                $statusText = "包含文本";
-                break;
-            case "http_status_code":
-                $statusText = "HTTP状态码";
-                break;
-            case "timeout":
-                $statusText = "请求超时";
-                break;
-            default:
-                throw new \Exception("Match Message type[{$type}] not found!");
-                break;
-        }
-        if ($reverse){
-            $statusText = "[反向]".$statusText;
-        }
-        return $statusText;
-    }
 }
