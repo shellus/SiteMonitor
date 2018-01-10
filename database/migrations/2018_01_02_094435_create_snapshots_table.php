@@ -24,8 +24,8 @@ class CreateSnapshotsTable extends Migration
             $table->boolean('is_error')->default(false); // 是否请求错误，没有得到响应头的情况，都属于此类，包含 dns解析错误、TCP连接无法建立/响应前中断、得到的响应不符合HTTP规范等
             $table->text('error_message')->nullable(); // 自定义拼合文本，人类可读
             $table->string('http_status_code')->nullable();
-            $table->text('headers')->nullable(); // 包含首行
-            $table->text('body_content');
+            $table->binary('headers'); // 包含首行，如果有跳转，将包含多次的header。
+            $table->binary('body_content');
 
             $table->unsignedInteger('time_total')->default(0); // 从dns解析，到获取到最后一字节的时间
             $table->unsignedInteger('time_dns')->default(0);
@@ -38,8 +38,9 @@ class CreateSnapshotsTable extends Migration
             $table->foreign('monitor_id')->references('id')->on('monitors');
         });
 
-	    \DB::statement('ALTER TABLE snapshots MODIFY body_content LONGBLOB NULL;');
-
+        // 注意： header和body使用二进制储存，用以兼容所有编码格式，header中也可能出现非ASCII编码。
+        \DB::statement('ALTER TABLE snapshots MODIFY headers BLOB NULL;');
+	    \DB::statement('ALTER TABLE snapshots MODIFY body_content MEDIUMBLOB NULL;');
     }
 
     /**
