@@ -66,6 +66,7 @@ class User extends Authenticatable
         $monitorBaiDu->request_headers = "";
         $monitorBaiDu->request_body = "";
 
+        $monitorBaiDu->is_enable = true;
         $monitorBaiDu->request_nobody = true;
         $monitorBaiDu->interval_normal = 60 * 5;
         $monitorBaiDu->interval_match = 60 * 5;
