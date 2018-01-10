@@ -56,7 +56,8 @@ class User extends Authenticatable
      * @param $matchReverse
      * @return Monitor
      */
-    public function quickGenerateMonitor($url, $matchType, $matchContent, $matchReverse){
+    public function quickGenerateMonitor($url, $matchType, $matchContent, $matchReverse)
+    {
         $monitorBaiDu = new Monitor();
         $monitorBaiDu->user_id = $this->id;
         $monitorBaiDu->title = Monitor::generateTitle();
@@ -65,7 +66,10 @@ class User extends Authenticatable
         $monitorBaiDu->request_headers = "";
         $monitorBaiDu->request_body = "";
 
-        $monitorBaiDu->request_interval_second = 60 * 1;
+        $monitorBaiDu->request_nobody = true;
+        $monitorBaiDu->interval_normal = 60 * 5;
+        $monitorBaiDu->interval_match = 60 * 5;
+        $monitorBaiDu->interval_error = 30;
 
         $monitorBaiDu->match_reverse = $matchReverse;
         $monitorBaiDu->match_type = $matchType;

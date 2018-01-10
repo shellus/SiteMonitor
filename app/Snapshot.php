@@ -39,6 +39,7 @@ use Illuminate\Support\Str;
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Snapshot whereTimeTotal($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Snapshot whereTimeTransport($value)
  * @property-read \App\Monitor $monitor
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Snapshot whereIsMatch($value)
  */
 class Snapshot extends Model
 {

@@ -3,6 +3,7 @@
 namespace App;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 
 /**
  * App\Monitor
@@ -34,9 +35,32 @@ use Illuminate\Database\Eloquent\Model;
  * @property int $match_reverse
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Monitor whereMatchReverse($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Monitor whereRequestBody($value)
+ * @property int $request_nobody
+ * @property int $is_enable
+ * @property int $interval_normal
+ * @property int $interval_match
+ * @property int $interval_error
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Monitor whereIntervalError($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Monitor whereIntervalMatch($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Monitor whereIntervalNormal($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Monitor whereIsEnable($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Monitor whereRequestNobody($value)
  */
 class Monitor extends Model
 {
+
+    /**
+     * 最后一个快照，如果没有快照，将抛出异常
+     * @return Snapshot
+     * @throws ModelNotFoundException
+     */
+    public function lastSnapshot(){
+        return $this->snapshots()->orderBy('id', 'desc')->firstOrFail();
+    }
+    public function snapshots()
+    {
+        return $this->hasMany('App\Snapshot');
+    }
     static public function generateTitle(){
         return "M-" . str_pad(self::count(), 5, '0', STR_PAD_LEFT);
     }

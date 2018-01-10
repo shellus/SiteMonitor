@@ -25,7 +25,7 @@ class CreateSnapshotsTable extends Migration
             $table->text('error_message')->nullable(); // 自定义拼合文本，人类可读
             $table->string('http_status_code')->nullable();
             $table->text('headers')->nullable(); // 包含首行
-            $table->text('body_content')->nullable();
+            $table->text('body_content');
 
             $table->unsignedInteger('time_total')->default(0); // 从dns解析，到获取到最后一字节的时间
             $table->unsignedInteger('time_dns')->default(0);
@@ -38,7 +38,7 @@ class CreateSnapshotsTable extends Migration
             $table->foreign('monitor_id')->references('id')->on('monitors');
         });
 
-	    \DB::statement('ALTER TABLE snapshots MODIFY body_content LONGBLOB NOT NULL;');
+	    \DB::statement('ALTER TABLE snapshots MODIFY body_content LONGBLOB NULL;');
 
     }
 

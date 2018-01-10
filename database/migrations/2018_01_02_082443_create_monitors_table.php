@@ -26,7 +26,11 @@ class CreateMonitorsTable extends Migration
             $table->text('request_headers'); // 不包含首行
             $table->text('request_body');
 
-            $table->unsignedInteger('request_interval_second');
+            $table->boolean('request_nobody')->default(false); // 是否不请求body
+            $table->boolean('is_enable')->default(false); // 是否启用监控
+            $table->unsignedInteger('interval_normal'); // 未匹配也无错误的情况下间隔秒数
+            $table->unsignedInteger('interval_match'); // 匹配的情况下间隔秒数
+            $table->unsignedInteger('interval_error'); // 出错的情况下间隔秒数
 
             $table->string('match_type'); // include / http_status_code / timeout
             $table->boolean('match_reverse')->default(false); // 相反匹配，例如timeout 翻转的话，就是如果响应时间快于x毫秒，则通知

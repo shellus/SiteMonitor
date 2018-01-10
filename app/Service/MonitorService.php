@@ -40,7 +40,21 @@ class MonitorService
      */
     static public function joinQueue(Monitor $monitor)
     {
-        $time = Carbon::now()->addSecond($monitor->request_interval_second);
+        $interval = $monitor->interval_normal;
+        try{
+            $lastSnapshot = $monitor->lastSnapshot();
+            if ($lastSnapshot->is_error){
+                $interval = $monitor->interval_error;
+            }elseif ($lastSnapshot->is_match){
+                $interval = $monitor->interval_match;
+            }
+        }catch (ModelNotFoundException $e){
+            // 第一次就立刻运行吧
+            $interval = 0;
+        }
+
+        $time = Carbon::now()->addSecond($interval);
+
         dispatch((new MonitorJob($monitor))->delay($time));
     }
 
@@ -68,6 +82,10 @@ class MonitorService
 
 
         curl_setopt($curlHandle, CURLOPT_URL, $monitor->request_url);
+
+        if ($monitor->request_nobody) {
+            curl_setopt($curlHandle, CURLOPT_NOBODY, true);
+        }
         curl_setopt($curlHandle, CURLOPT_CUSTOMREQUEST, $monitor->request_method);
         if ($monitor->request_method != "GET") {
             curl_setopt($curlHandle, CURLOPT_POSTFIELDS, $monitor->request_body);
@@ -76,7 +94,7 @@ class MonitorService
         // CURLOPT_CONNECT_ONLY 仅连接
 
         // 最大60秒超时
-        curl_setopt($curlHandle, CURLOPT_TIMEOUT, 60);
+        curl_setopt($curlHandle, CURLOPT_TIMEOUT, 30);
 
         $response = curl_exec($curlHandle);
 
