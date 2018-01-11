@@ -45,6 +45,25 @@ use Illuminate\Database\Eloquent\ModelNotFoundException;
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Monitor whereIntervalNormal($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Monitor whereIsEnable($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Monitor whereRequestNobody($value)
+ * @property int $last_error
+ * @property int $last_match
+ * @property-read \Illuminate\Database\Eloquent\Collection|\App\Snapshot[] $snapshots
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Monitor whereLastError($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Monitor whereLastMatch($value)
+ * @property string|null $last_error_time
+ * @property string|null $last_match_time
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Monitor whereLastErrorTime($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Monitor whereLastMatchTime($value)
+ * @property int|null $time_total_average_15minute
+ * @property int|null $time_total_average_30minute
+ * @property int|null $time_total_average_1hour
+ * @property int|null $time_total_average_12hour
+ * @property int|null $time_total_average_24hour
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Monitor whereTimeTotalAverage12hour($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Monitor whereTimeTotalAverage15minute($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Monitor whereTimeTotalAverage1hour($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Monitor whereTimeTotalAverage24hour($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Monitor whereTimeTotalAverage30minute($value)
  */
 class Monitor extends Model
 {

@@ -40,6 +40,8 @@ use Illuminate\Support\Str;
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Snapshot whereTimeTransport($value)
  * @property-read \App\Monitor $monitor
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Snapshot whereIsMatch($value)
+ * @property int $is_done
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Snapshot whereIsDone($value)
  */
 class Snapshot extends Model
 {
