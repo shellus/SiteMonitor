@@ -45,6 +45,12 @@ use Illuminate\Support\Str;
  */
 class Snapshot extends Model
 {
+    protected $casts = [
+        'is_match' => 'boolean',
+        'is_error' => 'boolean',
+        'is_done' => 'boolean',
+    ];
+
     public function monitor()
     {
         return $this->belongsTo('App\Monitor');

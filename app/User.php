@@ -58,26 +58,26 @@ class User extends Authenticatable
      */
     public function quickGenerateMonitor($url, $matchType, $matchContent, $matchReverse)
     {
-        $monitorBaiDu = new Monitor();
-        $monitorBaiDu->user_id = $this->id;
-        $monitorBaiDu->title = Monitor::generateTitle();
-        $monitorBaiDu->request_url = $url;
-        $monitorBaiDu->request_method = "GET";
-        $monitorBaiDu->request_headers = "";
-        $monitorBaiDu->request_body = "";
+        $monitor = new Monitor();
+        $monitor->user_id = $this->id;
+        $monitor->title = Monitor::generateTitle();
+        $monitor->request_url = $url;
+        $monitor->request_method = "GET";
+        $monitor->request_headers = "";
+        $monitor->request_body = "";
 
-        $monitorBaiDu->is_enable = true;
-        $monitorBaiDu->request_nobody = true;
-        $monitorBaiDu->interval_normal = 60 * 5;
-        $monitorBaiDu->interval_match = 60 * 5;
-        $monitorBaiDu->interval_error = 30;
+        $monitor->is_enable = true;
+        $monitor->request_nobody = true;
+        $monitor->interval_normal = 60 * 5;
+        $monitor->interval_match = 60 * 5;
+        $monitor->interval_error = 30;
 
-        $monitorBaiDu->match_reverse = $matchReverse;
-        $monitorBaiDu->match_type = $matchType;
-        $monitorBaiDu->match_content = $matchContent;
+        $monitor->match_reverse = $matchReverse;
+        $monitor->match_type = $matchType;
+        $monitor->match_content = $matchContent;
 
-        $monitorBaiDu->saveOrFail();
-        return $monitorBaiDu;
+        $monitor->saveOrFail();
+        return $monitor;
     }
 
 }
