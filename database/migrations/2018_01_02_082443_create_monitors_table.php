@@ -33,6 +33,7 @@ class CreateMonitorsTable extends Migration
 
             $table->timestamp('last_error_time')->nullable();
             $table->timestamp('last_match_time')->nullable();
+            $table->timestamp('last_request_time')->nullable();
 
             $table->unsignedInteger('time_total_average_15minute')->default(0);
             $table->unsignedInteger('time_total_average_30minute');

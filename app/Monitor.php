@@ -67,7 +67,7 @@ use Illuminate\Database\Eloquent\ModelNotFoundException;
  */
 class Monitor extends Model
 {
-    protected $dates = ['created_at', 'updated_at', 'last_match_time', 'last_error_time'];
+    protected $dates = ['created_at', 'updated_at', 'last_match_time', 'last_error_time', 'last_request_time'];
     protected $casts = [
         'is_enable' => 'boolean',
     ];

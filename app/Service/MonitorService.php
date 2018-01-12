@@ -141,12 +141,17 @@ class MonitorService
 
         $monitor->last_error = $snapshot->is_error;
         $monitor->last_match = $snapshot->is_match;
+
+        $nowTime = Carbon::now();
+
         if ($monitor->last_error) {
-            $monitor->last_error_time = Carbon::now();
+            $monitor->last_error_time = $nowTime;
         }
         if ($monitor->last_match) {
-            $monitor->last_match_time = Carbon::now();
+            $monitor->last_match_time = $nowTime;
         }
+
+        $monitor->last_request_time = $nowTime;
 
         $monitor->time_total_average_15minute = $monitor->snapshots()->whereIsDone(1)->where('created_at', '>', Carbon::now()->subMinute(15))->avg('time_total');
         $monitor->time_total_average_30minute = $monitor->snapshots()->whereIsDone(1)->where('created_at', '>', Carbon::now()->subMinute(30))->avg('time_total');
