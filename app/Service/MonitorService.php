@@ -135,8 +135,11 @@ class MonitorService
             $matcher = $snapshot->getMatcher();
             /** @var $matcher Monitor\Match\MatchBase */
             $snapshot->is_match = $matcher->isMatch();
+
+            // 错误则未完成
+            $snapshot->is_done = true;
         }
-        $snapshot->is_done = true;
+
         $snapshot->saveOrFail();
 
         $monitor->last_error = $snapshot->is_error;

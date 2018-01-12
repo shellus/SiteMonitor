@@ -2,6 +2,7 @@
 
 namespace App;
 
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 
@@ -85,5 +86,13 @@ class Monitor extends Model
     }
     static public function generateTitle(){
         return "M-" . str_pad(self::count(), 5, '0', STR_PAD_LEFT);
+    }
+    public function flotData(){
+        $snaps = $this->snapshots()->whereIsDone(1)->orderBy('id', 'desc')->where('updated_at', '>', Carbon::now()->subHour(1))->get(['id', 'time_total']);
+        $flotData = [];
+        for($i=0;$i<count($snaps);$i++){
+            $flotData[] = [$i+1, $snaps[$i]->time_total];
+        }
+        return $flotData;
     }
 }
