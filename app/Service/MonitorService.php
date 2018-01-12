@@ -162,6 +162,8 @@ class MonitorService
         $monitor->time_total_average_12hour = $monitor->snapshots()->whereIsDone(1)->where('created_at', '>', Carbon::now()->subHour(12))->avg('time_total');
         $monitor->time_total_average_24hour = $monitor->snapshots()->whereIsDone(1)->where('created_at', '>', Carbon::now()->subHour(24))->avg('time_total');
 
+        $monitor->last_1hour_table_cache = json_encode($monitor->flotData());
+
         $monitor->saveOrFail();
         return $snapshot;
     }

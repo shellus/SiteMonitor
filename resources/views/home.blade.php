@@ -43,7 +43,7 @@
                         @foreach(\App\Monitor::whereUserId(Auth::id())->get() as $monitor)
                             <div class="col-sm-6 col-md-4">
                                 <div class="thumbnail">
-                                    <div class="demo-container" data-flot="{{ json_encode($monitor->flotData()) }}">
+                                    <div class="demo-container" data-flot="{{ $monitor->last_1hour_table_cache }}">
                                         <div class="demo-placeholder placeholder"></div>
                                     </div>
                                     <p>
@@ -97,21 +97,84 @@
 
 @section('foot')
     <script src="https://cdn.bootcss.com/flot/0.8.3/jquery.flot.min.js"></script>
+    <script src="https://cdn.bootcss.com/flot/0.8.3/jquery.flot.time.min.js"></script>
 
     <script type="text/javascript">
-        $(function() {
-            var options = {
-                series: {
-                    lines: { show: true },
-                    points: { show: false }
+        $("<div id='tooltip'></div>").css({
+            position: "absolute",
+            display: "none",
+            border: "1px solid #fdd",
+            padding: "2px",
+            "background-color": "#fee",
+            opacity: 0.80
+        }).appendTo("body");
+        $(".placeholder").bind("plothover", function (event, pos, item) {
+
+                var str = "(" + pos.x.toFixed(2) + ", " + pos.y.toFixed(2) + ")";
+                $("#hoverdata").text(str);
+
+                if (item) {
+                    var x = item.datapoint[0].toFixed(2),
+                        y = item.datapoint[1].toFixed(2);
+
+                    bo=plotOptions.xaxis.tickFormatter(x, null);
+                    $("#tooltip").html(bo + " 分钟前 " + " 访问耗时" + y + "毫秒")
+                        .css({top: item.pageY-30, left: item.pageX+1})
+                        .fadeIn(200);
+                } else {
+                    $("#tooltip").hide();
                 }
-            };
+        });
+        var plotOptions = {
+            series: {
+                lines: { show: true },
+                points: { show: false }
+            },
+            yaxis: {
+                show: true,
+                autoscaleMargin: 2/*,
+                    max: 1000,
+                    tickSize: 200,*/
+            },
+            xaxis: {
+                mode: "time",
+//                    timeformat: "%H-%M",
+                tickFormatter: function (val, axis) {
+                    var d = new Date(parseInt(val));
+                    var n = new Date();
+                    var diff = (n.getTime()-d.getTime())/60000;
+                    return parseInt(diff)+"";
+                },
+                minTickSize: [5, "minute"]
+            },
+            grid: {
+                clickable: true,
+                hoverable: true,
+                autoHighlight: true,
+            }
+        };
+        $(function() {
+
             $(".placeholder").each(function(){
                 var d1 = $(this).parent().data("flot");
-                $.plot($(this), [{
+                for(var i in d1){
+                    d1[i][0] = (d1[i][0] + 0) * 1000
+                }
+                var data = [
+                    {
                     label: "1 hours",
                     data: d1
-                }], options);
+                    }/*,
+                    {
+                        label: "x轴为N分钟前",
+                        data: []
+                    },
+                    {
+                        label: "y轴为请求耗时毫秒数",
+                        data: []
+                    }*/
+                ];
+                $.plot($(this), data, plotOptions);
             });
 
         });

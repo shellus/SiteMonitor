@@ -65,6 +65,10 @@ use Illuminate\Database\Eloquent\ModelNotFoundException;
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Monitor whereTimeTotalAverage1hour($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Monitor whereTimeTotalAverage24hour($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Monitor whereTimeTotalAverage30minute($value)
+ * @property \Carbon\Carbon|null $last_request_time
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Monitor whereLastRequestTime($value)
+ * @property string|null $last_1hour_table_cache
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Monitor whereLast1hourTableCache($value)
  */
 class Monitor extends Model
 {
@@ -88,10 +92,10 @@ class Monitor extends Model
         return "M-" . str_pad(self::count(), 5, '0', STR_PAD_LEFT);
     }
     public function flotData(){
-        $snaps = $this->snapshots()->whereIsDone(1)->orderBy('id', 'desc')->where('updated_at', '>', Carbon::now()->subHour(1))->get(['id', 'time_total']);
+        $snaps = $this->snapshots()->whereIsDone(1)->orderBy('id', 'desc')->where('updated_at', '>', Carbon::now()->subHour(1))->get(['id', 'time_total', 'created_at']);
         $flotData = [];
         for($i=0;$i<count($snaps);$i++){
-            $flotData[] = [$i+1, $snaps[$i]->time_total];
+            $flotData[] = [$snaps[$i]->created_at->getTimestamp(), $snaps[$i]->time_total];
         }
         return $flotData;
     }

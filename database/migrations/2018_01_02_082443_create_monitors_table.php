@@ -26,6 +26,8 @@ class CreateMonitorsTable extends Migration
             $table->text('request_headers'); // 不包含首行
             $table->text('request_body');
 
+            $table->text('last_1hour_table_cache');
+
             $table->boolean('request_nobody')->default(false); // 是否不请求body
             $table->boolean('is_enable')->default(false); // 是否启用监控
             $table->boolean('last_error')->default(false);
