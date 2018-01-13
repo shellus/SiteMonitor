@@ -79,7 +79,8 @@ class MonitorController extends Controller
      */
     public function edit(Monitor $monitor)
     {
-        //
+	    $projects = \Auth::User()->projects;
+	    return view('monitor.create')->with('project', $this->project)->with('projects', $projects)->with('monitor', $monitor);
     }
 
     /**

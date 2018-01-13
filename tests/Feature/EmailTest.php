@@ -19,7 +19,7 @@ class EmailTest extends TestCase
      */
     public function testExample()
     {
-        MonitorService::handleSnapshot(Snapshot::findOrFail(2));
+        MonitorService::handleSnapshotNotice(Snapshot::findOrFail(2));
         $this->assertTrue(true);
     }
 }

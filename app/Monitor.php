@@ -49,13 +49,17 @@ use Illuminate\Database\Eloquent\ModelNotFoundException;
  * @property int $project_id
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Monitor whereProjectId($value)
  * @property-read \App\Project $project
+ * @property int $request_follow_location
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Monitor whereRequestFollowLocation($value)
  */
 class Monitor extends Model
 {
     protected $casts = [
         'is_enable' => 'boolean',
+        'request_nobody' => 'boolean',
+        'request_follow_location' => 'boolean',
     ];
-	protected $fillable = ['project_id','title','request_url','request_method','request_headers','request_body','is_enable','request_nobody','interval_normal','interval_match','interval_error','match_reverse','match_type','match_content'];
+	protected $fillable = ['project_id','title','request_url','request_method','request_headers','request_body','is_enable','request_nobody','interval_normal','interval_match','interval_error','match_reverse','match_type','match_content','request_follow_location'];
 
     /**
      * 最后一个快照，如果没有快照，将抛出异常

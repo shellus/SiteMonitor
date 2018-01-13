@@ -16,39 +16,53 @@
                 </button>
                 <ul class="dropdown-menu">
                     @foreach($projects as $projectItem)
-                        <li><a href="{{ route('monitor.index') . "?project={$projectItem->id}" }}">{{ $projectItem->title }}</a></li>
+                        <li><a href="{{ route('monitor.create') . "?project={$projectItem->id}" }}">{{ $projectItem->title }}</a></li>
                     @endforeach
                 </ul>
             </div>
         </div>
         <div class="row">
-            <form method="post" action="{{ route('monitor.store') }}">
+            <form method="post" action="{{ route('monitor.store') . "?project={$project->id}" }}">
                 {{ csrf_field() }}
                 <div class="form-group">
                     <label for="exampleInputEmail1">标题</label>
-                    <input type="text" name="title" class="form-control" id="exampleInputEmail1" placeholder="新建监控">
+                    <input type="text" name="title" class="form-control" id="exampleInputEmail1" placeholder="新建监控" value="{{ $monitor->title }}">
                 </div>
                 <div class="form-group">
                     <label for="exampleInputEmail1">URL</label>
-                    <input type="text" name="request_url" class="form-control" id="exampleInputEmail1" placeholder="http://www.baidu.com/">
+                    <input type="text" name="request_url" class="form-control" id="exampleInputEmail1" placeholder="http://www.baidu.com/" value="{{ $monitor->request_url }}">
                 </div>
                 <div class="form-group">
                     <label for="exampleInputEmail1">请求方法</label>
-                    <input type="text" name="request_method" class="form-control" id="exampleInputEmail1" placeholder="GET" value="GET">
+                    <input type="text" name="request_method" class="form-control" id="exampleInputEmail1" placeholder="GET" value="{{ $monitor->request_method?:"GET" }}">
                 </div>
                 <div class="form-group">
                     <label for="exampleInputEmail1">Headers</label>
-                    <input type="text" name="request_headers" class="form-control" id="exampleInputEmail1" placeholder="Host: www.baidu.com">
+                    <input type="text" name="request_headers" class="form-control" id="exampleInputEmail1" placeholder="Host: www.baidu.com" value="{{ $monitor->request_headers }}">
                 </div>
                 <div class="form-group">
                     <label for="exampleInputEmail1">Request Body</label>
-                    <input type="text" name="request_body" class="form-control" id="exampleInputEmail1" placeholder="a=1&b=2">
+                    <input type="text" name="request_body" class="form-control" id="exampleInputEmail1" placeholder="a=1&b=2" value="{{ $monitor->request_body }}">
                 </div>
-                <div class="checkbox">
-                    <label>
-                        <input name="request_nobody" value="1" type="checkbox"> 不接收Body（内容匹配请勿勾选）
+                <div class="form-group">
+                    <label for="exampleInputEmail1">不接收Body（内容匹配请勿选是）</label>
+                    <label class="radio-inline">
+                        <input type="radio" name="request_nobody" id="inlineRadio1" value="0" {{ $monitor->request_nobody===false?"checked":"" }}> 否
+                    </label>
+                    <label class="radio-inline">
+                        <input type="radio" name="request_nobody" id="inlineRadio2" value="1"> 是
                     </label>
                 </div>
+                <div class="form-group">
+                    <label for="exampleInputEmail1">跟随跳转（监测状态码为跳转后的状态码）</label>
+                    <label class="radio-inline">
+                        <input type="radio" name="request_follow_location" id="inlineRadio1" value="0"> 否
+                    </label>
+                    <label class="radio-inline">
+                        <input type="radio" name="request_follow_location" id="inlineRadio2" value="1" checked> 是
+                    </label>
+                </div>
+
                 <div class="form-group">
                     <label for="exampleInputEmail1">请求间隔秒数</label>
                     <input type="text" name="interval_normal" class="form-control" id="exampleInputEmail1" placeholder="600" value="300">
@@ -69,9 +83,13 @@
                     <label for="exampleInputPassword1">匹配内容</label>
                     <input type="text" name="match_content" class="form-control" id="exampleInputPassword1" placeholder="200">
                 </div>
-                <div class="checkbox">
-                    <label>
-                        <input name="match_reverse" value="1" type="checkbox"> 是否反向匹配
+                <div class="form-group">
+                    <label for="exampleInputEmail1">反向匹配</label>
+                    <label class="radio-inline">
+                        <input type="radio" name="match_reverse" id="inlineRadio1" value="0" checked> 否
+                    </label>
+                    <label class="radio-inline">
+                        <input type="radio" name="match_reverse" id="inlineRadio2" value="1"> 是
                     </label>
                 </div>
                 <button type="submit" class="btn btn-default">Submit</button>

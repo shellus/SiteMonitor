@@ -39,7 +39,7 @@
             </div>
 
             <div class="text-right">
-                <a class="btn btn-success" href="{{ route('monitor.create') }}">
+                <a class="btn btn-success" href="{{ route('monitor.create') . "?project={$project->id}" }}">
                     增加监控
                     <span class="glyphicon glyphicon-plus" aria-hidden="true"></span>
                 </a>
@@ -61,13 +61,7 @@
                                             快照列表
                                             <span class="glyphicon glyphicon-list" aria-hidden="true"></span>
                                         </a>
-                                        {{--<span class="badge">{{ $monitor->snapshots()->count() }}</span>--}}
-
-                                        <a class="btn btn-default btn-sm" href="#">
-                                            暂停监控
-                                            <span class="glyphicon glyphicon-off" aria-hidden="true"></span>
-                                        </a>
-                                        <a class="btn btn-default btn-sm" href="#">
+                                        <a class="btn btn-default btn-sm" href="{{ route('monitor.edit', $monitor->id) . "?project={$project->id}" }}">
                                             修改监控
                                             <span class="glyphicon glyphicon-edit" aria-hidden="true"></span>
                                         </a>

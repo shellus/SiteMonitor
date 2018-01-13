@@ -17,9 +17,18 @@ class MonitorTest extends TestCase
      */
     public function testExample()
     {
-    	foreach (Monitor::all() as $monitor){
-		    $snapshot = MonitorService::request($monitor);
-		    MonitorService::handleSnapshot($snapshot);
+    	/** @var Monitor $monitor */
+	    foreach (Monitor::all() as $monitor){
+
+		    $snapshot = $monitor->snapshots()->create();
+
+		    $requestResult = MonitorService::request($monitor);
+
+		    MonitorService::storeSnapshot($snapshot, $requestResult);
+		    MonitorService::updateMonitorData($monitor, $snapshot);
+		    MonitorService::handleSnapshotNotice($snapshot);
+//		    MonitorService::joinQueue($monitor);
+
 		    $this->assertTrue(true);
 	    }
     }

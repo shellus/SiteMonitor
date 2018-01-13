@@ -33,6 +33,8 @@ class CreateMonitorsTable extends Migration
             $table->unsignedInteger('interval_match'); // 匹配的情况下间隔秒数
             $table->unsignedInteger('interval_error'); // 出错的情况下间隔秒数
 
+	        $table->boolean('request_follow_location')->default(true); // 是否跟随跳转
+
             $table->string('match_type'); // include / http_status_code / timeout
             $table->boolean('match_reverse')->default(false); // 相反匹配，例如timeout 翻转的话，就是如果响应时间快于x毫秒，则通知
             $table->string('match_content'); // 内容或状态吗

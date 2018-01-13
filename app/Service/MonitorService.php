@@ -45,7 +45,6 @@ class MonitorService
 	}
 	static public function quickGenerateMonitor($projectId, $url, $matchType, $matchContent, $matchReverse)
 	{
-
 		$attributes=[
 			'project_id' => $projectId,
 			'title' => Monitor::generateTitle(),
@@ -54,6 +53,7 @@ class MonitorService
 			'request_headers' => "",
 			'request_body' => "",
 			'is_enable' => true,
+			'request_follow_location' => true,
 			'request_nobody' => true,
 			'interval_normal' => 60 * 5,
 			'interval_match' => 60 * 5,
@@ -109,24 +109,18 @@ class MonitorService
      *
      * @param Monitor $monitor
      *
-     * @return Snapshot
+     * @return array
      */
     static public function request(Monitor $monitor)
     {
-
-        $snapshot = new Snapshot();
-        $snapshot->monitor_id = $monitor->id;
-        $snapshot->saveOrFail();
-
         $curlHandle = curl_init();
 
         curl_setopt($curlHandle, CURLOPT_SAFE_UPLOAD, true); // 禁止body中使用@上传文件
         curl_setopt($curlHandle, CURLOPT_FORBID_REUSE, true); // 不重用TCP连接
         curl_setopt($curlHandle, CURLOPT_RETURNTRANSFER, true); // 返回数据，不输出
         curl_setopt($curlHandle, CURLOPT_HEADER, true); // 输出header
-        curl_setopt($curlHandle, CURLOPT_FOLLOWLOCATION, true); // 跟随跳转
+        curl_setopt($curlHandle, CURLOPT_FOLLOWLOCATION, $monitor->request_follow_location); // 跟随跳转
         curl_setopt($curlHandle, CURLOPT_MAXREDIRS, 5); // 跳转次数
-
 
         curl_setopt($curlHandle, CURLOPT_URL, $monitor->request_url);
 
@@ -145,61 +139,76 @@ class MonitorService
 
         $response = curl_exec($curlHandle);
 
-
         $curlInfo = curl_getinfo($curlHandle);
-
 
         $curlErrorNo = curl_errno($curlHandle);
         $curlErrorMessage = curl_error($curlHandle);
 
-
         curl_close($curlHandle);
 
-
-        $snapshot->http_status_code = $curlInfo['http_code'];
-
         $headerSize = $curlInfo['header_size'];
-        $headers = substr($response, 0, $headerSize);
-        $body = substr($response, $headerSize);
+	    $curlInfo['headers'] = substr($response, 0, $headerSize);
+	    $curlInfo['body'] = substr($response, $headerSize);
+	    $curlInfo['curl_error_no'] = $curlErrorNo;
+	    $curlInfo['curl_error_message'] = $curlErrorMessage;
+
+	    return $curlInfo;
+    }
 
 
-        $snapshot->headers = $headers;
-        $snapshot->body_content = $body;
+	/**
+	 * @param $snapshot Snapshot
+	 * @param $requestResult array
+	 *
+	 * @return Snapshot
+	 */
+    static public function storeSnapshot($snapshot, $requestResult){
+	    $snapshot->http_status_code = $requestResult['http_code'];
+	    $snapshot->headers = $requestResult['headers'];
+	    $snapshot->body_content = $requestResult['body'];
 
-        $snapshot->time_total = bcmul($curlInfo['total_time'], 1000, 0);
-        $snapshot->time_dns = bcmul($curlInfo['namelookup_time'], 1000, 0);
-        $snapshot->time_connection = bcmul($curlInfo['connect_time'], 1000, 0);
-        $snapshot->time_transport = bcmul($curlInfo['pretransfer_time'], 1000, 0);
-        $snapshot->error_message = "";
-        $snapshot->is_error = false;
-        $snapshot->is_match = false;
+	    $snapshot->time_total = bcmul($requestResult['total_time'], 1000, 0);
+	    $snapshot->time_dns = bcmul($requestResult['namelookup_time'], 1000, 0);
+	    $snapshot->time_connection = bcmul($requestResult['connect_time'], 1000, 0);
+	    $snapshot->time_transport = bcmul($requestResult['pretransfer_time'], 1000, 0);
+	    $snapshot->error_message = "";
+	    $snapshot->is_error = false;
+	    $snapshot->is_match = false;
 
-        if ($curlErrorNo !== 0) {
-            $snapshot->is_error = true;
-            $snapshot->error_message = "curl error[$curlErrorNo]: " . $curlErrorMessage;
-        } else {
-            $matcher = $snapshot->getMatcher();
-            /** @var $matcher Monitor\Match\MatchBase */
-            $snapshot->is_match = $matcher->isMatch();
+	    $curlErrorNo = $requestResult['curl_error_no'];
+	    $curlErrorMessage = $requestResult['curl_error_message'];
+	    if ($curlErrorNo !== 0) {
+		    $snapshot->is_error = true;
+		    $snapshot->error_message = "curl error[$curlErrorNo]: " . $curlErrorMessage;
+	    } else {
+		    $matcher = $snapshot->getMatcher();
+		    /** @var $matcher Monitor\Match\MatchBase */
+		    $snapshot->is_match = $matcher->isMatch();
 
-            // 错误则未完成
-            $snapshot->is_done = true;
-        }
+		    // 错误则未完成
+		    $snapshot->is_done = true;
+	    }
 
-        $snapshot->saveOrFail();
+	    $snapshot->saveOrFail();
+    }
 
+	/**
+	 * @param $monitor Monitor
+	 * @param $snapshot Snapshot
+	 */
+    static public function updateMonitorData($monitor, $snapshot){
 	    $monitorData = $monitor->data;
 	    $monitorData->last_error = $snapshot->is_error;
 	    $monitorData->last_match = $snapshot->is_match;
 
-        $nowTime = Carbon::now();
+	    $nowTime = Carbon::now();
 
-        if ($monitorData->last_error) {
-	        $monitorData->last_error_time = $nowTime;
-        }
-        if ($monitorData->last_match) {
-	        $monitorData->last_match_time = $nowTime;
-        }
+	    if ($monitorData->last_error) {
+		    $monitorData->last_error_time = $nowTime;
+	    }
+	    if ($monitorData->last_match) {
+		    $monitorData->last_match_time = $nowTime;
+	    }
 
 	    $monitorData->last_request_time = $nowTime;
 
@@ -212,16 +221,13 @@ class MonitorService
 	    $monitorData->last_1hour_table_cache = json_encode($monitor->flotData());
 
 	    $monitorData->saveOrFail();
-        return $snapshot;
     }
-
-
     /**
      * 决定要不要通知，包括通知文本的生成都在这里
      *
      * @param Snapshot $snapshot
      */
-    static public function handleSnapshot(Snapshot $snapshot)
+    static public function handleSnapshotNotice(Snapshot $snapshot)
     {
         /** @var User $user */
         $user = User::findOrFail($snapshot->monitor->project->user_id);
