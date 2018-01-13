@@ -55,6 +55,8 @@ class Monitor extends Model
     protected $casts = [
         'is_enable' => 'boolean',
     ];
+	protected $fillable = ['project_id','title','request_url','request_method','request_headers','request_body','is_enable','request_nobody','interval_normal','interval_match','interval_error','match_reverse','match_type','match_content'];
+
     /**
      * 最后一个快照，如果没有快照，将抛出异常
      * @return Snapshot

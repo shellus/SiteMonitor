@@ -34,33 +34,36 @@ class MonitorService
 		\DB::commit();
 	}
 
-	static public function quickGenerateMonitor($userId, $url, $matchType, $matchContent, $matchReverse)
-	{
+	static public function createMonitor(array $attributes = []){
 		\DB::beginTransaction();
-		$monitor = new Monitor();
-		$monitor->user_id = $userId;
-		$monitor->title = Monitor::generateTitle();
-		$monitor->request_url = $url;
-		$monitor->request_method = "GET";
-		$monitor->request_headers = "";
-		$monitor->request_body = "";
-
-		$monitor->is_enable = true;
-		$monitor->request_nobody = true;
-		$monitor->interval_normal = 60 * 5;
-		$monitor->interval_match = 60 * 5;
-		$monitor->interval_error = 30;
-
-		$monitor->match_reverse = $matchReverse;
-		$monitor->match_type = $matchType;
-		$monitor->match_content = $matchContent;
-
-		$monitor->saveOrFail();
-
+		/** @var Monitor $monitor */
+		$monitor = Monitor::create($attributes);
 		$monitor->data()->create();
-
 		\DB::commit();
+		self::joinQueue($monitor);
 		return $monitor;
+	}
+	static public function quickGenerateMonitor($projectId, $url, $matchType, $matchContent, $matchReverse)
+	{
+
+		$attributes=[
+			'project_id' => $projectId,
+			'title' => Monitor::generateTitle(),
+			'request_url' => $url,
+			'request_method' => "GET",
+			'request_headers' => "",
+			'request_body' => "",
+			'is_enable' => true,
+			'request_nobody' => true,
+			'interval_normal' => 60 * 5,
+			'interval_match' => 60 * 5,
+			'interval_error' => 30,
+			'match_reverse' => $matchReverse,
+			'match_type' => $matchType,
+			'match_content' => $matchContent,
+		];
+
+		return self::createMonitor($attributes);
 	}
 
     static public function runAllMonitor()

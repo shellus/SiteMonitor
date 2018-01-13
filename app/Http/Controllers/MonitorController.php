@@ -4,27 +4,34 @@ namespace App\Http\Controllers;
 
 use App\Monitor;
 use App\Project;
+use App\Service\MonitorService;
 use Illuminate\Http\Request;
 
 class MonitorController extends Controller
 {
+	protected $project;
+	public function __construct() {
+		$this->middleware(function ($request, $next) {
+			$projectId = $request->input('project');
+			if ($projectId){
+				$this->project = Project::whereUserId(\Auth::id())->findOrFail($projectId);
+			}else{
+				$this->project = \Auth::User()->defaultProject();
+			}
+			return $next($request);
+		});
+
+	}
+
 	/**
 	 * Display a listing of the resource.
 	 *
-	 * @param Request $request
-	 *
 	 * @return \Illuminate\Http\Response
 	 */
-    public function index(Request $request)
+    public function index()
     {
-    	$projectId = $request->input('project');
-    	if ($projectId){
-		    $project = Project::whereUserId(\Auth::id())->findOrFail($projectId);
-	    }else{
-		    $project = \Auth::User()->defaultProject();
-	    }
     	$projects = \Auth::User()->projects;
-	    return view('monitor.index')->with('project', $project)->with('projects', $projects);
+	    return view('monitor.index')->with('project', $this->project)->with('projects', $projects);
     }
 
     /**
@@ -34,7 +41,8 @@ class MonitorController extends Controller
      */
     public function create()
     {
-        return view('monitor.create');
+	    $projects = \Auth::User()->projects;
+        return view('monitor.create')->with('project', $this->project)->with('projects', $projects);
     }
 
     /**
@@ -45,28 +53,10 @@ class MonitorController extends Controller
      */
     public function store(Request $request)
     {
-
-        $monitor = new Monitor();
-        $monitor->user_id = $request->user()->id;
-        $monitor->title = $request->input('title', Monitor::generateTitle());
-        $monitor->request_url = $request->input('url');
-        $monitor->request_method = $request->input('method', 'GET');
-        $monitor->request_headers = $request->input('header', '');;
-        $monitor->request_body = $request->input('body', '');;
-
-        $monitor->is_enable = true;
-        $monitor->request_nobody = true;
-
-        $monitor->interval_normal = $request->input('interval_normal', 60*5);
-        $monitor->interval_match = $monitor->interval_normal;
-        $monitor->interval_error = 10;
-
-        $monitor->match_reverse = $request->input('match_reverse');
-        $monitor->match_type = $request->input('match_type');
-        $monitor->match_content = $request->input('match_content');
-
-        $monitor->saveOrFail();
-
+    	$expandData = [
+    		'project_id' => $this->project->id,
+	    ];
+        $monitor = MonitorService::createMonitor(array_merge($request->all(), $expandData));
         return '1';
     }
 

@@ -7,8 +7,6 @@
             padding-left: 1em;
             padding-top: 1.5em;
         }
-
-
         .demo-container {
             box-sizing: border-box;
             width: 310px;
@@ -18,7 +16,6 @@
             /*border: 1px solid #ddd;*/
             background: #fff;
         }
-
         .demo-placeholder {
             width: 100%;
             height: 100%;
