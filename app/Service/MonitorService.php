@@ -221,7 +221,7 @@ class MonitorService
     static public function handleSnapshot(Snapshot $snapshot)
     {
         /** @var User $user */
-        $user = User::findOrFail($snapshot->monitor->user_id);
+        $user = User::findOrFail($snapshot->monitor->project->user_id);
 
         // 取出上一个快照，判断是否变化，如果没变化，就直接return了
         try {

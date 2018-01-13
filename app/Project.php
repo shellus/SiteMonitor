@@ -18,9 +18,15 @@ use Illuminate\Database\Eloquent\Model;
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Project whereUpdatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Project whereUserId($value)
  * @mixin \Eloquent
+ * @property-read \Illuminate\Database\Eloquent\Collection|\App\Monitor[] $monitors
+ * @property-read \App\User $user
  */
 class Project extends Model
 {
+	public function user()
+	{
+		return $this->belongsTo('App\User');
+	}
 	/**
 	 * @return Monitor
 	 */

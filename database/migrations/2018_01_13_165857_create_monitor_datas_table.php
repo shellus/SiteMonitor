@@ -26,11 +26,11 @@ class CreateMonitorDatasTable extends Migration
 	        $table->timestamp('last_match_time')->nullable();
 	        $table->timestamp('last_request_time')->nullable();
 
-	        $table->unsignedInteger('time_total_average_15minute')->default(0);
-	        $table->unsignedInteger('time_total_average_30minute')->default(0);
-	        $table->unsignedInteger('time_total_average_1hour')->default(0);
-	        $table->unsignedInteger('time_total_average_12hour')->default(0);
-	        $table->unsignedInteger('time_total_average_24hour')->default(0);
+	        $table->unsignedInteger('time_total_average_15minute')->default(0)->nullable();;
+	        $table->unsignedInteger('time_total_average_30minute')->default(0)->nullable();;
+	        $table->unsignedInteger('time_total_average_1hour')->default(0)->nullable();;
+	        $table->unsignedInteger('time_total_average_12hour')->default(0)->nullable();;
+	        $table->unsignedInteger('time_total_average_24hour')->default(0)->nullable();;
 
             $table->timestamps();
 

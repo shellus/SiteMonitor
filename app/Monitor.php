@@ -48,6 +48,7 @@ use Illuminate\Database\Eloquent\ModelNotFoundException;
  * @mixin \Eloquent
  * @property int $project_id
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Monitor whereProjectId($value)
+ * @property-read \App\Project $project
  */
 class Monitor extends Model
 {
@@ -62,7 +63,10 @@ class Monitor extends Model
     public function lastSnapshot(){
         return $this->snapshots()->orderBy('id', 'desc')->firstOrFail();
     }
-
+	public function project()
+	{
+		return $this->belongsTo('App\Project');
+	}
 	/**
 	 * @return Snapshot
 	 */
