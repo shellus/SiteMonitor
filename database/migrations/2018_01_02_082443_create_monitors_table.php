@@ -19,7 +19,7 @@ class CreateMonitorsTable extends Migration
     {
         Schema::create('monitors', function (Blueprint $table) {
             $table->increments('id');
-            $table->unsignedInteger('user_id');
+            $table->unsignedInteger('project_id');
             $table->string('title');
             $table->text('request_url');
             $table->text('request_method');
@@ -50,7 +50,7 @@ class CreateMonitorsTable extends Migration
     public function down()
     {
         Schema::table('monitors', function (Blueprint $table) {
-            $table->dropForeign(['user_id']);
+            $table->dropForeign(['project_id']);
         });
 
         Schema::dropIfExists('monitors');

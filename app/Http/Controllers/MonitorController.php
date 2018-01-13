@@ -3,18 +3,28 @@
 namespace App\Http\Controllers;
 
 use App\Monitor;
+use App\Project;
 use Illuminate\Http\Request;
 
 class MonitorController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function index()
+	/**
+	 * Display a listing of the resource.
+	 *
+	 * @param Request $request
+	 *
+	 * @return \Illuminate\Http\Response
+	 */
+    public function index(Request $request)
     {
-        //
+    	$projectId = $request->input('project');
+    	if ($projectId){
+		    $project = Project::whereUserId(\Auth::id())->findOrFail($projectId);
+	    }else{
+		    $project = \Auth::User()->defaultProject();
+	    }
+    	$projects = \Auth::User()->projects;
+	    return view('monitor.index')->with('project', $project)->with('projects', $projects);
     }
 
     /**

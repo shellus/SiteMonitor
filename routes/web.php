@@ -18,7 +18,8 @@ Route::get('/', function () {
 Auth::routes();
 
 Route::get('/home', 'HomeController@index')->name('home');
-Route::resource('/monitor', 'MonitorController');
+
+Route::resource('/monitor', 'MonitorController')->middleware('auth');
 
 Route::get('/test', function () {
 

@@ -29,18 +29,31 @@
     <div class="container">
         <div class="row">
             <h2>控制台 - HTTP监控</h2>
+            项目：
+            <div class="btn-group">
+                <button class="btn btn-default btn-sm dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    {{ $project->title }} <span class="caret"></span>
+                </button>
+                <ul class="dropdown-menu">
+                    @foreach($projects as $projectItem)
+                        <li><a href="{{ route('monitor.index') . "?project={$projectItem->id}" }}">{{ $projectItem->title }}</a></li>
+                    @endforeach
+                </ul>
+            </div>
+
             <div class="text-right">
                 <a class="btn btn-success" href="{{ route('monitor.create') }}">
                     增加监控
                     <span class="glyphicon glyphicon-plus" aria-hidden="true"></span>
                 </a>
             </div>
+            <br>
             <div class="panel panel-default">
                 <div class="panel-heading">监控列表</div>
 
                 <div class="panel-body">
                     <div class="row">
-                        @foreach(\App\Monitor::whereUserId(Auth::id())->with('data')->get() as $monitor)
+                        @foreach($project->monitors()->with('data')->get() as $monitor)
                             <div class="col-sm-6 col-md-4">
                                 <div class="thumbnail">
                                     <div class="demo-container" data-flot="{{ $monitor->data->last_1hour_table_cache }}">

@@ -46,6 +46,8 @@ use Illuminate\Database\Eloquent\ModelNotFoundException;
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Monitor whereUpdatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Monitor whereUserId($value)
  * @mixin \Eloquent
+ * @property int $project_id
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Monitor whereProjectId($value)
  */
 class Monitor extends Model
 {
