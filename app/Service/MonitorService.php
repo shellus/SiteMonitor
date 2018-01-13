@@ -19,8 +19,51 @@ use Illuminate\Database\Eloquent\ModelNotFoundException;
 
 class MonitorService
 {
+	/**
+	 * 删除一个监控任务，及其关联数据
+	 * @param $monitorId
+	 */
+	static public function deleteMonitor($monitorId){
+		/** @var Monitor $monitor */
+		$monitor = Monitor::findOrFail($monitorId);
 
-    static public function runMonitor()
+		\DB::beginTransaction();
+		$monitor->snapshots()->delete();
+		$monitor->data()->delete();
+		$monitor->delete();
+		\DB::commit();
+	}
+
+	static public function quickGenerateMonitor($userId, $url, $matchType, $matchContent, $matchReverse)
+	{
+		\DB::beginTransaction();
+		$monitor = new Monitor();
+		$monitor->user_id = $userId;
+		$monitor->title = Monitor::generateTitle();
+		$monitor->request_url = $url;
+		$monitor->request_method = "GET";
+		$monitor->request_headers = "";
+		$monitor->request_body = "";
+
+		$monitor->is_enable = true;
+		$monitor->request_nobody = true;
+		$monitor->interval_normal = 60 * 5;
+		$monitor->interval_match = 60 * 5;
+		$monitor->interval_error = 30;
+
+		$monitor->match_reverse = $matchReverse;
+		$monitor->match_type = $matchType;
+		$monitor->match_content = $matchContent;
+
+		$monitor->saveOrFail();
+
+		$monitor->data()->create();
+
+		\DB::commit();
+		return $monitor;
+	}
+
+    static public function runAllMonitor()
     {
         $jobs = Monitor::all();
         foreach ($jobs as $job) {

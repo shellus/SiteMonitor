@@ -39,6 +39,6 @@ class MonitorCommand extends Command
      */
     public function handle()
     {
-        MonitorService::runMonitor();
+        MonitorService::runAllMonitor();
     }
 }

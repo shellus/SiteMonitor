@@ -46,38 +46,4 @@ class User extends Authenticatable
     protected $hidden = [
         'password', 'remember_token',
     ];
-
-
-    /**
-     * 快速增加监控任务
-     * @param $url
-     * @param $matchType
-     * @param $matchContent
-     * @param $matchReverse
-     * @return Monitor
-     */
-    public function quickGenerateMonitor($url, $matchType, $matchContent, $matchReverse)
-    {
-        $monitor = new Monitor();
-        $monitor->user_id = $this->id;
-        $monitor->title = Monitor::generateTitle();
-        $monitor->request_url = $url;
-        $monitor->request_method = "GET";
-        $monitor->request_headers = "";
-        $monitor->request_body = "";
-
-        $monitor->is_enable = true;
-        $monitor->request_nobody = true;
-        $monitor->interval_normal = 60 * 5;
-        $monitor->interval_match = 60 * 5;
-        $monitor->interval_error = 30;
-
-        $monitor->match_reverse = $matchReverse;
-        $monitor->match_type = $matchType;
-        $monitor->match_content = $matchContent;
-
-        $monitor->saveOrFail();
-        return $monitor;
-    }
-
 }
