@@ -42,7 +42,7 @@ class MonitorController extends Controller
     public function create()
     {
 	    $projects = \Auth::User()->projects;
-        return view('monitor.create')->with('project', $this->project)->with('projects', $projects);
+        return view('monitor.create')->with('project', $this->project)->with('projects', $projects)->with('monitor', new Monitor());
     }
 
     /**
@@ -53,11 +53,17 @@ class MonitorController extends Controller
      */
     public function store(Request $request)
     {
-    	$expandData = [
-    		'project_id' => $this->project->id,
+	    $expandData = [
+		    'project_id' => $this->project->id,
 	    ];
-        $monitor = MonitorService::createMonitor(array_merge($request->all(), $expandData));
-        return '1';
+    	$commitData = array_merge($request->all(), $expandData);
+
+	    if ($monitorId = $request->input('monitor_id')){
+	    	Monitor::findOrFail($monitorId)->update($commitData);
+	    }else{
+		    MonitorService::createMonitor($commitData);
+	    }
+        return '修改成功';
     }
 
     /**
