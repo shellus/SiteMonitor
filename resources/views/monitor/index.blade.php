@@ -94,9 +94,22 @@
                                             <label>最后一次匹配：</label>{{ $monitor->data->last_match_time?$monitor->data->last_match_time->diffForHumans():"从未" }}
                                         </li>
                                         <li>
-                                            <label>最后一次错误：</label>{{ $monitor->data->last_error_time?$monitor->data->last_error_time->diffForHumans():"从未" }}
+                                            <label>最后一次错误：</label>
+                                            @if($monitor->data->last_error_time && $monitor->data->last_error_time > \Carbon\Carbon::now()->subHour(1))
+                                                <span class="bg-danger">{{ $monitor->data->last_error_time->diffForHumans() }}</span>
+                                            @elseif($monitor->data->last_error_time && $monitor->data->last_error_time > \Carbon\Carbon::now()->subHour(24))
+                                                <span class="bg-warning">{{ $monitor->data->last_error_time->diffForHumans() }}</span>
+                                            @else
+                                            {{ $monitor->data->last_error_time?$monitor->data->last_error_time->diffForHumans():"从未" }}
+                                            @endif
                                         </li>
-                                        <li><label>1小时平均： </label>{{ $monitor->data->time_total_average_1hour }} 毫秒</li>
+                                        <li><label>1小时平均： </label>
+                                            @if($monitor->data->time_total_average_1hour)
+                                                {{ $monitor->data->time_total_average_1hour }}毫秒
+                                                @else
+                                                <span class="bg-warning">无数据</span>
+                                            @endif
+                                        </li>
                                     </ul>
                                 </div>
                             </div>
