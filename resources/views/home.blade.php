@@ -40,10 +40,10 @@
 
                 <div class="panel-body">
                     <div class="row">
-                        @foreach(\App\Monitor::whereUserId(Auth::id())->get() as $monitor)
+                        @foreach(\App\Monitor::whereUserId(Auth::id())->with('data')->get() as $monitor)
                             <div class="col-sm-6 col-md-4">
                                 <div class="thumbnail">
-                                    <div class="demo-container" data-flot="{{ $monitor->last_1hour_table_cache }}">
+                                    <div class="demo-container" data-flot="{{ $monitor->data->last_1hour_table_cache }}">
                                         <div class="demo-placeholder placeholder"></div>
                                     </div>
                                     <p>
@@ -75,15 +75,15 @@
                                     <ul class="list-unstyled">
                                         <li><label>请求间隔：</label> {{ $monitor->interval_normal }} 秒</li>
                                         <li>
-                                            <label>最后一次请求：</label>{{ $monitor->last_request_time?$monitor->last_request_time->diffForHumans():"从未" }}
+                                            <label>最后一次请求：</label>{{ $monitor->data->last_request_time?$monitor->data->last_request_time->diffForHumans():"从未" }}
                                         </li>
                                         <li>
-                                            <label>最后一次匹配：</label>{{ $monitor->last_match_time?$monitor->last_match_time->diffForHumans():"从未" }}
+                                            <label>最后一次匹配：</label>{{ $monitor->data->last_match_time?$monitor->data->last_match_time->diffForHumans():"从未" }}
                                         </li>
                                         <li>
-                                            <label>最后一次错误：</label>{{ $monitor->last_error_time?$monitor->last_error_time->diffForHumans():"从未" }}
+                                            <label>最后一次错误：</label>{{ $monitor->data->last_error_time?$monitor->data->last_error_time->diffForHumans():"从未" }}
                                         </li>
-                                        <li><label>1小时平均： </label>{{ $monitor->time_total_average_1hour }} 毫秒</li>
+                                        <li><label>1小时平均： </label>{{ $monitor->data->time_total_average_1hour }} 毫秒</li>
                                     </ul>
                                 </div>
                             </div>

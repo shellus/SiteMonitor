@@ -142,29 +142,30 @@ class MonitorService
 
         $snapshot->saveOrFail();
 
-        $monitor->last_error = $snapshot->is_error;
-        $monitor->last_match = $snapshot->is_match;
+	    $monitorData = $monitor->data;
+	    $monitorData->last_error = $snapshot->is_error;
+	    $monitorData->last_match = $snapshot->is_match;
 
         $nowTime = Carbon::now();
 
-        if ($monitor->last_error) {
-            $monitor->last_error_time = $nowTime;
+        if ($monitorData->last_error) {
+	        $monitorData->last_error_time = $nowTime;
         }
-        if ($monitor->last_match) {
-            $monitor->last_match_time = $nowTime;
+        if ($monitorData->last_match) {
+	        $monitorData->last_match_time = $nowTime;
         }
 
-        $monitor->last_request_time = $nowTime;
+	    $monitorData->last_request_time = $nowTime;
 
-        $monitor->time_total_average_15minute = $monitor->snapshots()->whereIsDone(1)->where('created_at', '>', Carbon::now()->subMinute(15))->avg('time_total');
-        $monitor->time_total_average_30minute = $monitor->snapshots()->whereIsDone(1)->where('created_at', '>', Carbon::now()->subMinute(30))->avg('time_total');
-        $monitor->time_total_average_1hour = $monitor->snapshots()->whereIsDone(1)->where('created_at', '>', Carbon::now()->subHour(1))->avg('time_total');
-        $monitor->time_total_average_12hour = $monitor->snapshots()->whereIsDone(1)->where('created_at', '>', Carbon::now()->subHour(12))->avg('time_total');
-        $monitor->time_total_average_24hour = $monitor->snapshots()->whereIsDone(1)->where('created_at', '>', Carbon::now()->subHour(24))->avg('time_total');
+	    $monitorData->time_total_average_15minute = $monitor->snapshots()->whereIsDone(1)->where('created_at', '>', Carbon::now()->subMinute(15))->avg('time_total');
+	    $monitorData->time_total_average_30minute = $monitor->snapshots()->whereIsDone(1)->where('created_at', '>', Carbon::now()->subMinute(30))->avg('time_total');
+	    $monitorData->time_total_average_1hour = $monitor->snapshots()->whereIsDone(1)->where('created_at', '>', Carbon::now()->subHour(1))->avg('time_total');
+	    $monitorData->time_total_average_12hour = $monitor->snapshots()->whereIsDone(1)->where('created_at', '>', Carbon::now()->subHour(12))->avg('time_total');
+	    $monitorData->time_total_average_24hour = $monitor->snapshots()->whereIsDone(1)->where('created_at', '>', Carbon::now()->subHour(24))->avg('time_total');
 
-        $monitor->last_1hour_table_cache = json_encode($monitor->flotData());
+	    $monitorData->last_1hour_table_cache = json_encode($monitor->flotData());
 
-        $monitor->saveOrFail();
+	    $monitorData->saveOrFail();
         return $snapshot;
     }
 

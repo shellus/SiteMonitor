@@ -26,23 +26,8 @@ class CreateMonitorsTable extends Migration
             $table->text('request_headers'); // 不包含首行
             $table->text('request_body');
 
-            $table->text('last_1hour_table_cache');
-
             $table->boolean('request_nobody')->default(false); // 是否不请求body
             $table->boolean('is_enable')->default(false); // 是否启用监控
-            $table->boolean('last_error')->default(false);
-            $table->boolean('last_match')->default(false);
-
-            $table->timestamp('last_error_time')->nullable();
-            $table->timestamp('last_match_time')->nullable();
-            $table->timestamp('last_request_time')->nullable();
-
-            $table->unsignedInteger('time_total_average_15minute')->default(0);
-            $table->unsignedInteger('time_total_average_30minute');
-            $table->unsignedInteger('time_total_average_1hour');
-            $table->unsignedInteger('time_total_average_12hour');
-            $table->unsignedInteger('time_total_average_24hour');
-
 
             $table->unsignedInteger('interval_normal'); // 未匹配也无错误的情况下间隔秒数
             $table->unsignedInteger('interval_match'); // 匹配的情况下间隔秒数
