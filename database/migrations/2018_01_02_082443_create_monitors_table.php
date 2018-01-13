@@ -23,8 +23,8 @@ class CreateMonitorsTable extends Migration
             $table->string('title');
             $table->text('request_url');
             $table->text('request_method');
-            $table->text('request_headers'); // 不包含首行
-            $table->text('request_body');
+            $table->text('request_headers')->nullable(); // 不包含首行
+            $table->text('request_body')->nullable();
 
             $table->boolean('request_nobody')->default(false); // 是否不请求body
             $table->boolean('is_enable')->default(false); // 是否启用监控
