@@ -60,10 +60,12 @@ class MonitorController extends Controller
 
 	    if ($monitorId = $request->input('monitor_id')){
 	    	Monitor::findOrFail($monitorId)->update($commitData);
+		    $message = "修改监控成功";
 	    }else{
 		    MonitorService::createMonitor($commitData);
+		    $message = "新增监控成功";
 	    }
-        return '修改成功';
+	    return redirect()->route('monitor.index')->with('status', $message);
     }
 
     /**
