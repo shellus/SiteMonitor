@@ -37,7 +37,16 @@
                     @endforeach
                 </ul>
             </div>
+            <a href="{{ route('project.create') }}" data-toggle="modal" data-target="#myModal"><span class="glyphicon glyphicon-plus" aria-hidden="true"></span></a>
+            <a href="{{ route('project.edit', $project->id) }}" data-toggle="modal" data-target="#myModal"><span class="glyphicon glyphicon-edit" aria-hidden="true"></span></a>
 
+            <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+                <div class="modal-dialog" role="document">
+                    <div class="modal-content">
+
+                    </div>
+                </div>
+            </div>
             <div class="text-right">
                 <a class="btn btn-success" href="{{ route('monitor.create') . "?project={$project->id}" }}">
                     增加监控

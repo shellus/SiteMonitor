@@ -20,7 +20,7 @@ Auth::routes();
 Route::get('/home', 'HomeController@index')->name('home');
 
 Route::resource('/monitor', 'MonitorController')->middleware('auth');
-
+Route::resource('/project', 'ProjectController')->middleware('auth');
 Route::get('/test', function () {
 
 });
