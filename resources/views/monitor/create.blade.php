@@ -9,24 +9,21 @@
     <div class="container">
         <div class="row">
             <h2>控制台 - HTTP监控</h2>
-            项目：
-            <div class="btn-group">
-                <button class="btn btn-default btn-sm dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                    {{ $project->title }} <span class="caret"></span>
-                </button>
-                <ul class="dropdown-menu">
-                    @foreach($projects as $projectItem)
-                        <li><a href="{{ route('monitor.create') . "?project={$projectItem->id}" }}">{{ $projectItem->title }}</a></li>
-                    @endforeach
-                </ul>
-            </div>
         </div>
         <div class="row">
             <div class="col-md-8">
-            <form method="post" action="{{ route('monitor.store') . "?project={$project->id}" }}">
+            <form method="post" action="{{ route('monitor.store') }}">
                 {{ csrf_field() }}
-                <input type="hidden" name="monitor_id" value="{{ $monitor->id }}">
+                <input type="hidden" name="id" value="{{ $monitor->id }}">
 
+                <div class="form-group">
+                    <label for="exampleInputEmail1">项目</label>
+                    <select class="form-control" name="project_id">
+                        @foreach($projects as $projectItem)
+                            <option value="{{ $projectItem->id }}" {{ $projectItem->id === $monitor->project_id?"selected=\"selected\"":""}}>{{ $projectItem->title }}</option>
+                        @endforeach
+                    </select>
+                </div>
                 <div class="form-group">
                     <label for="exampleInputEmail1">标题</label>
                     <input type="text" name="title" class="form-control" id="exampleInputEmail1" placeholder="新建监控" value="{{ $monitor->title }}">
@@ -47,11 +44,11 @@
                     </div>
                     <div class="form-group">
                         <label for="exampleInputEmail1">Headers</label>
-                        <input type="text" name="request_headers" class="form-control" id="exampleInputEmail1" placeholder="Host: www.baidu.com" value="{{ $monitor->request_headers }}">
+                        <textarea name="request_headers" class="form-control" rows="3" placeholder="Host: www.baidu.com" value="{{ $monitor->request_headers }}"></textarea>
                     </div>
                     <div class="form-group">
                         <label for="exampleInputEmail1">Request Body</label>
-                        <input type="text" name="request_body" class="form-control" id="exampleInputEmail1" placeholder="a=1&b=2" value="{{ $monitor->request_body }}">
+                        <textarea name="request_body" class="form-control" rows="3" placeholder="a=1&b=2" value="{{ $monitor->request_body }}"></textarea>
                     </div>
                 </div>
                 <div class="form-group">

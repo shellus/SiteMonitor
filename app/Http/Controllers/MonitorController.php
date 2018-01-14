@@ -5,33 +5,28 @@ namespace App\Http\Controllers;
 use App\Monitor;
 use App\Project;
 use App\Service\MonitorService;
+use App\User;
 use Illuminate\Http\Request;
 
 class MonitorController extends Controller
 {
-	protected $project;
-	public function __construct() {
-		$this->middleware(function ($request, $next) {
-			$projectId = $request->input('project');
-			if ($projectId){
-				$this->project = Project::whereUserId(\Auth::id())->findOrFail($projectId);
-			}else{
-				$this->project = \Auth::User()->defaultProject();
-			}
-			return $next($request);
-		});
-
-	}
-
 	/**
 	 * Display a listing of the resource.
 	 *
 	 * @return \Illuminate\Http\Response
 	 */
-    public function index()
+    public function index(Request $request)
     {
     	$projects = \Auth::User()->projects;
-	    return view('monitor.index')->with('project', $this->project)->with('projects', $projects);
+
+	    $projectId = $request->input('project');
+	    if ($projectId){
+		    $project = Project::whereUserId(\Auth::id())->findOrFail($projectId);
+	    }else{
+		    $project = \Auth::User()->defaultProject();
+	    }
+
+	    return view('monitor.index')->with('project', $project)->with('projects', $projects);
     }
 
     /**
@@ -42,7 +37,7 @@ class MonitorController extends Controller
     public function create()
     {
 	    $projects = \Auth::User()->projects;
-        return view('monitor.create')->with('project', $this->project)->with('projects', $projects)->with('monitor', new Monitor());
+        return view('monitor.create')->with('projects', $projects)->with('monitor', new Monitor());
     }
 
     /**
@@ -53,12 +48,13 @@ class MonitorController extends Controller
      */
     public function store(Request $request)
     {
-	    $expandData = [
-		    'project_id' => $this->project->id,
-	    ];
-    	$commitData = array_merge($request->all(), $expandData);
 
-	    if ($monitorId = $request->input('monitor_id')){
+	    $projectId = $request->input('project_id');
+	    $commitData = array_merge($request->all());
+
+	    if (!\Auth::user()->projects()->whereId($projectId)->exists()){
+		    $message = "项目ID错误，项目不存在，或不属于你";
+	    }elseif ($monitorId = $request->input('id')){
 	    	Monitor::findOrFail($monitorId)->update($commitData);
 		    $message = "修改监控成功";
 	    }else{
@@ -88,7 +84,7 @@ class MonitorController extends Controller
     public function edit(Monitor $monitor)
     {
 	    $projects = \Auth::User()->projects;
-	    return view('monitor.create')->with('project', $this->project)->with('projects', $projects)->with('monitor', $monitor);
+	    return view('monitor.create')->with('projects', $projects)->with('monitor', $monitor);
     }
 
     /**
