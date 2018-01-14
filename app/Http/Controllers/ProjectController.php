@@ -92,6 +92,14 @@ class ProjectController extends Controller
      */
     public function destroy(Project $project)
     {
-        //
+	    if ($project->monitors()->count() !== 0){
+		    $message = '项目中还有监控项，不能删除!';
+	    } elseif ($project->delete()){
+		    $message = '删除项目成功!';
+	    }else{
+		    $message = '删除项目失败，请检查项目是否存在!';
+	    }
+
+		return redirect()->route('monitor.index')->with('status', $message);
     }
 }

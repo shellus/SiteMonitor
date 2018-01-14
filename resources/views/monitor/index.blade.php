@@ -39,6 +39,11 @@
             </div>
             <a href="{{ route('project.create') }}" data-toggle="modal" data-target="#myModal"><span class="glyphicon glyphicon-plus" aria-hidden="true"></span></a>
             <a href="{{ route('project.edit', $project->id) }}" data-toggle="modal" data-target="#myModal"><span class="glyphicon glyphicon-edit" aria-hidden="true"></span></a>
+            <form id="project-destroy" style="display: inline;" action="{{ route('project.destroy', $project->id) }}" method="post">
+                {{ csrf_field() }}
+                {{ method_field('delete') }}
+                <a onclick="$(this).parent().submit();"><span class="glyphicon glyphicon-trash" aria-hidden="true"></span></a>
+            </form>
 
             <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
                 <div class="modal-dialog" role="document">
