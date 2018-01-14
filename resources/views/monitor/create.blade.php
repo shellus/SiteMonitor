@@ -35,17 +35,24 @@
                     <label for="exampleInputEmail1">URL</label>
                     <input type="text" name="request_url" class="form-control" id="exampleInputEmail1" placeholder="http://www.baidu.com/" value="{{ $monitor->request_url }}">
                 </div>
-                <div class="form-group">
-                    <label for="exampleInputEmail1">请求方法</label>
-                    <input type="text" name="request_method" class="form-control" id="exampleInputEmail1" placeholder="GET" value="{{ $monitor->request_method?:"GET" }}">
-                </div>
-                <div class="form-group">
-                    <label for="exampleInputEmail1">Headers</label>
-                    <input type="text" name="request_headers" class="form-control" id="exampleInputEmail1" placeholder="Host: www.baidu.com" value="{{ $monitor->request_headers }}">
-                </div>
-                <div class="form-group">
-                    <label for="exampleInputEmail1">Request Body</label>
-                    <input type="text" name="request_body" class="form-control" id="exampleInputEmail1" placeholder="a=1&b=2" value="{{ $monitor->request_body }}">
+                <a class="btn btn-info btn-sm" role="button" data-toggle="collapse" href="#collapseExample" aria-expanded="false" aria-controls="collapseExample">
+                    点击展开详细请求信息编辑
+                    <span class="glyphicon glyphicon-chevron-down" aria-hidden="true"></span>
+                </a>
+                <br><br>
+                <div class="collapse" id="collapseExample">
+                    <div class="form-group">
+                        <label for="exampleInputEmail1">请求方法</label>
+                        <input type="text" name="request_method" class="form-control" id="exampleInputEmail1" placeholder="GET" value="{{ $monitor->request_method?:"GET" }}">
+                    </div>
+                    <div class="form-group">
+                        <label for="exampleInputEmail1">Headers</label>
+                        <input type="text" name="request_headers" class="form-control" id="exampleInputEmail1" placeholder="Host: www.baidu.com" value="{{ $monitor->request_headers }}">
+                    </div>
+                    <div class="form-group">
+                        <label for="exampleInputEmail1">Request Body</label>
+                        <input type="text" name="request_body" class="form-control" id="exampleInputEmail1" placeholder="a=1&b=2" value="{{ $monitor->request_body }}">
+                    </div>
                 </div>
                 <div class="form-group">
                     <label for="exampleInputEmail1">不接收Body（内容匹配请勿选是）</label>
@@ -93,6 +100,15 @@
                     </label>
                     <label class="radio-inline">
                         <input type="radio" name="match_reverse" id="inlineRadio2" value="1" {{ $monitor->request_nobody===true?"checked":"" }}> 是
+                    </label>
+                </div>
+                <div class="form-group">
+                    <label for="exampleInputEmail1">是否启用</label>
+                    <label class="radio-inline">
+                        <input type="radio" name="is_enable" id="inlineRadio1" value="0" {{ $monitor->is_enable===false?"checked":"" }}> 否
+                    </label>
+                    <label class="radio-inline">
+                        <input type="radio" name="is_enable" id="inlineRadio2" value="1" {{ $monitor->is_enable===true?"checked":"" }}{{ $monitor->id?"":"checked" }}> 是
                     </label>
                 </div>
                 <button type="submit" class="btn btn-default">Submit</button>
