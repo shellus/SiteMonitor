@@ -22,6 +22,7 @@
             </div>
         </div>
         <div class="row">
+            <div class="col-md-8">
             <form method="post" action="{{ route('monitor.store') . "?project={$project->id}" }}">
                 {{ csrf_field() }}
                 <input type="hidden" name="monitor_id" value="{{ $monitor->id }}">
@@ -95,7 +96,15 @@
                     </label>
                 </div>
                 <button type="submit" class="btn btn-default">Submit</button>
+                <button form="monitor-destroy" class="btn btn-danger">删除监控</button>
             </form>
+            </div>
         </div>
+
+        <form id="monitor-destroy" action="{{ route('monitor.destroy', $monitor->id) }}" method="post">
+            {{ csrf_field() }}
+            {{ method_field('delete') }}
+        </form>
     </div>
+    <br><br><br><br>
 @endsection

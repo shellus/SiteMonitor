@@ -109,6 +109,12 @@ class MonitorController extends Controller
      */
     public function destroy(Monitor $monitor)
     {
-        //
+	    if (MonitorService::deleteMonitor($monitor->id)){
+		    $message = '删除监控成功!';
+	    }else{
+		    $message = '删除监控失败，请检查监控是否存在!';
+	    }
+
+	    return redirect()->route('monitor.index')->with('status', $message);
     }
 }

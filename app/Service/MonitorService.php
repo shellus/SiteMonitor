@@ -21,7 +21,10 @@ class MonitorService
 {
 	/**
 	 * 删除一个监控任务，及其关联数据
+	 *
 	 * @param $monitorId
+	 *
+	 * @return bool
 	 */
 	static public function deleteMonitor($monitorId){
 		/** @var Monitor $monitor */
@@ -32,6 +35,7 @@ class MonitorService
 		$monitor->data()->delete();
 		$monitor->delete();
 		\DB::commit();
+		return true;
 	}
 
 	static public function createMonitor(array $attributes = []){
