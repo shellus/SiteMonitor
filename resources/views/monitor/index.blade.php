@@ -53,7 +53,7 @@
                 </div>
             </div>
             <div class="text-right">
-                <a class="btn btn-success" href="{{ route('monitor.create') . "?project={$project->id}" }}">
+                <a class="btn btn-success" href="{{ route('monitor.create') }}">
                     增加监控
                     <span class="glyphicon glyphicon-plus" aria-hidden="true"></span>
                 </a>
@@ -75,7 +75,7 @@
                                             快照列表
                                             <span class="glyphicon glyphicon-list" aria-hidden="true"></span>
                                         </a>
-                                        <a class="btn btn-default btn-sm" href="{{ route('monitor.edit', $monitor->id) . "?project={$project->id}" }}">
+                                        <a class="btn btn-default btn-sm" href="{{ route('monitor.edit', $monitor->id) }}">
                                             修改监控
                                             <span class="glyphicon glyphicon-edit" aria-hidden="true"></span>
                                         </a>
