@@ -36,6 +36,8 @@ use Illuminate\Database\Eloquent\Model;
  * @method static \Illuminate\Database\Eloquent\Builder|\App\MonitorData whereTimeTotalAverage30minute($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\MonitorData whereUpdatedAt($value)
  * @mixin \Eloquent
+ * @property string|null $status_text
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\MonitorData whereStatusText($value)
  */
 class MonitorData extends Model
 {
