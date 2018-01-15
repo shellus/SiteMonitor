@@ -93,10 +93,10 @@
                 <div class="form-group">
                     <label for="exampleInputEmail1">反向匹配</label>
                     <label class="radio-inline">
-                        <input type="radio" name="match_reverse" id="inlineRadio1" value="0" {{ $monitor->request_nobody===false?"checked":"" }}{{ $monitor->id?"":"checked" }}> 否
+                        <input type="radio" name="match_reverse" id="inlineRadio1" value="0" {{ $monitor->match_reverse===false?"checked":"" }}{{ $monitor->id?"":"checked" }}> 否
                     </label>
                     <label class="radio-inline">
-                        <input type="radio" name="match_reverse" id="inlineRadio2" value="1" {{ $monitor->request_nobody===true?"checked":"" }}> 是
+                        <input type="radio" name="match_reverse" id="inlineRadio2" value="1" {{ $monitor->match_reverse===true?"checked":"" }}> 是
                     </label>
                 </div>
                 <div class="form-group">

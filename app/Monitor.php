@@ -57,6 +57,7 @@ class Monitor extends Model
     protected $casts = [
         'is_enable' => 'boolean',
         'request_nobody' => 'boolean',
+        'match_reverse' => 'boolean',
         'request_follow_location' => 'boolean',
     ];
 	protected $fillable = ['project_id','title','request_url','request_method','request_headers','request_body','is_enable','request_nobody','interval_normal','interval_match','interval_error','match_reverse','match_type','match_content','request_follow_location'];
