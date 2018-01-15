@@ -40,7 +40,7 @@ class CreateMonitorsTable extends Migration
             $table->string('match_content'); // 内容或状态吗
             $table->timestamps();
 
-            $table->foreign('user_id')->references('id')->on('users');
+            $table->foreign('project_id')->references('id')->on('projects');
         });
     }
 
