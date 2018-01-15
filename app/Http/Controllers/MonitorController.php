@@ -52,6 +52,17 @@ class MonitorController extends Controller
 	    $projectId = $request->input('project_id');
 	    $commitData = array_merge($request->all());
 
+	    $this->validate( $request, [
+		    'interval_normal' => 'required|integer|min:30|max:86400',
+		    'interval_match'  => 'required|integer|min:30|max:86400',
+		    'interval_error'  => 'required|integer|min:30|max:86400',
+		    'title'           => 'required|string|min:1|max:255',
+		    'request_url'     => 'required|url',
+		    'request_method'  => 'required|in:GET,POST,HEAD,PUT,DELETE',
+		    'match_type'      => 'required|in:include,http_status_code,timeout',
+		    'match_content'   => 'required|string|min:1|max:255',
+	    ] );
+
 	    if (!\Auth::user()->projects()->whereId($projectId)->exists()){
 		    $message = "项目ID错误，项目不存在，或不属于你";
 	    }elseif ($monitorId = $request->input('id')){

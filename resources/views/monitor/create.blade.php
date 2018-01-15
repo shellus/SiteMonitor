@@ -12,6 +12,15 @@
         </div>
         <div class="row">
             <div class="col-md-8">
+                @if (count($errors) > 0)
+                    <div class="alert alert-danger">
+                        <ul>
+                            @foreach ($errors->all() as $error)
+                                <li>{{ $error }}</li>
+                            @endforeach
+                        </ul>
+                    </div>
+                @endif
             <form method="post" action="{{ route('monitor.store') }}">
                 {{ csrf_field() }}
                 <input type="hidden" name="id" value="{{ $monitor->id }}">
