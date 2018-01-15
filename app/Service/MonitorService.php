@@ -267,7 +267,7 @@ class MonitorService
                 $messageText = "错误恢复";
             }else{
                 // 3
-                $messageText = "匹配恢复";
+                $messageText = "未匹配";
             }
         } else {
             if ($snapshot->is_error) {
