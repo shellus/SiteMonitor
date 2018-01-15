@@ -272,7 +272,7 @@ class MonitorService
         } else {
             if ($snapshot->is_error) {
                 // 1
-                $messageText = "请求错误，{$snapshot->error_message}";
+                $messageText = "请求错误";
             } else {
                 // 2、5
                 $messageText = "匹配命中";
