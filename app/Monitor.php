@@ -86,7 +86,7 @@ class Monitor extends Model
 		return $this->hasOne('App\MonitorData');
 	}
     static public function generateTitle(){
-        return "M-" . str_pad(self::count(), 5, '0', STR_PAD_LEFT);
+        return "M-" . str_pad(self::count()+3823, 5, '0', STR_PAD_LEFT);
     }
     public function flotData(){
         $snaps = $this->snapshots()->whereIsDone(1)->orderBy('id', 'desc')->where('updated_at', '>', Carbon::now()->subHour(1))->get(['id', 'time_total', 'created_at']);

@@ -26,7 +26,7 @@
                 </div>
                 <div class="form-group">
                     <label for="exampleInputEmail1">标题</label>
-                    <input type="text" name="title" class="form-control" id="exampleInputEmail1" placeholder="新建监控" value="{{ $monitor->title }}">
+                    <input type="text" name="title" class="form-control" id="exampleInputEmail1" placeholder="新建监控" value="{{ $monitor->title }}{{ $monitor->id?"":\App\Monitor::generateTitle() }}">
                 </div>
                 <div class="form-group">
                     <label for="exampleInputEmail1">URL</label>
@@ -84,7 +84,11 @@
                 </div>
                 <div class="form-group">
                     <label for="exampleInputPassword1">匹配类型</label>
-                    <input type="text" name="match_type" class="form-control" id="exampleInputPassword1" value="{{ $monitor->match_type }}{{ $monitor->id?"":"http_status_code" }}">
+                    <select class="form-control" name="match_type">
+                        <option value="http_status_code" {{ $monitor->match_type === "http_status_code"?"selected=\"selected\"":""}}{{ $monitor->id?"":"selected=\"selected\"" }}>HTTP响应状态代码匹配</option>
+                        <option value="include"  {{ $monitor->match_type === "include"?"selected=\"selected\"":""}}>关键字匹配</option>
+                        <option value="timeout"  {{ $monitor->match_type === "timeout"?"selected=\"selected\"":""}}>超时匹配（秒）</option>
+                    </select>
                 </div>
                 <div class="form-group">
                     <label for="exampleInputPassword1">匹配内容</label>
