@@ -22,6 +22,9 @@ class CreateMonitorDatasTable extends Migration
 	        $table->boolean('last_error')->default(false);
 	        $table->boolean('last_match')->default(false);
 
+            $table->unsignedInteger('last_status_level')->default(0);
+            $table->string('last_status_text')->nullable();
+
 	        $table->timestamp('last_error_time')->nullable();
 	        $table->timestamp('last_match_time')->nullable();
 	        $table->timestamp('last_request_time')->nullable();

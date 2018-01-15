@@ -36,12 +36,24 @@ use Illuminate\Database\Eloquent\Model;
  * @method static \Illuminate\Database\Eloquent\Builder|\App\MonitorData whereTimeTotalAverage30minute($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\MonitorData whereUpdatedAt($value)
  * @mixin \Eloquent
- * @property string|null $status_text
  * @method static \Illuminate\Database\Eloquent\Builder|\App\MonitorData whereStatusText($value)
+ * @property string|null $status_text
+ * @property int $last_status_level
+ * @property string|null $last_status_text
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\MonitorData whereLastStatusLevel($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\MonitorData whereLastStatusText($value)
  */
 class MonitorData extends Model
 {
 	protected $dates = ['created_at', 'updated_at', 'last_match_time', 'last_error_time', 'last_request_time'];
 	protected $primaryKey = 'monitor_id';
     //
+    public function lastStatusLevelLabel(){
+        $arr = [
+            "primary",
+            "warning",
+            "danger",
+        ];
+        return $arr[$this->last_status_level];
+    }
 }

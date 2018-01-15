@@ -5,14 +5,7 @@
         <div class="panel panel-default">
             项目: {{ $snapshot->monitor->title }}<br>
             <br>
-            状态：
-            @if($snapshot->is_error)
-                错误：{{ $snapshot->error_message }}
-            @elseif($snapshot->is_match)
-                匹配命中
-            @else
-                未匹配
-            @endif
+            状态：{{ $snapshot->status_message }}
             <br>
             产生时间: {{ $snapshot->created_at }}<br>
             URL: {{ $snapshot->monitor->request_url }}<br>

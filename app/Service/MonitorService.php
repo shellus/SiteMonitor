@@ -181,18 +181,78 @@ class MonitorService
 
 	    $curlErrorNo = $requestResult['curl_error_no'];
 	    $curlErrorMessage = $requestResult['curl_error_message'];
+
 	    if ($curlErrorNo !== 0) {
 		    $snapshot->is_error = true;
 		    $snapshot->error_message = "curl error[$curlErrorNo]: " . $curlErrorMessage;
+            $snapshot->status_message = $snapshot->error_message;
 	    } else {
 		    $matcher = $snapshot->getMatcher();
 		    /** @var $matcher Monitor\Match\MatchBase */
 		    $snapshot->is_match = $matcher->isMatch();
-
-		    // 错误则未完成
-		    $snapshot->is_done = true;
+		    if ($snapshot->is_match){
+                $snapshot->status_message = $matcher->getMessage();
+            }
 	    }
 
+        $snapshot->is_notice = true;
+        // 取出上一个快照，判断是否变化，如果没变化，就直接return了
+        try {
+            /** @var Snapshot $perSnapshot */
+            $perSnapshot = Snapshot::whereMonitorId($snapshot->monitor_id)->where('id', '<', $snapshot->id)->orderBy('id', 'desc')->firstOrFail();
+            if ($perSnapshot->is_match == $snapshot->is_match && $perSnapshot->is_error == $snapshot->is_error) {
+                // 如果匹配状态没变化，且错误状态没变化，就不通知
+                $snapshot->status_level = 0;
+                $snapshot->status_text = $perSnapshot->status_text;
+                $snapshot->is_notice = false;
+            }
+        } catch (ModelNotFoundException $e) {
+            // 如果第一次，且没有匹配也没错误，就不通知
+            if (!$snapshot->is_match && !$snapshot->is_error) {
+                $snapshot->status_level = 0;
+                $snapshot->status_text = "New";
+                $snapshot->is_notice = false;
+            }
+        }
+
+        if ($snapshot->status_level !== 0){
+            // 就4种状态
+            // 常态 - 未匹配
+            // 1 错误
+            // 2 匹配命中 如果错误，肯定不匹配
+            // 3 匹配恢复
+            // 不存在的 上次命中，这次错误恢复，因为上次错误，上次就肯定是未匹配，这次不可能匹配恢复
+            // 外加几种复合状态
+            // 4 错误恢复，即上次错误，这次正常且未匹配，就通知错误恢复
+            // 5 错误恢复匹配，即上次错误，这次错误恢复且匹配，就通知匹配
+
+            if (!$snapshot->is_error && !$snapshot->is_match) {
+                if ($perSnapshot->is_error){
+                    // 4
+                    $snapshot->status_text = "错误恢复";
+                    $snapshot->status_level = 1;
+                    $snapshot->status_message = "之前的错误已经消失，现在是正常未匹配状态";
+                }else{
+                    // 3
+                    $snapshot->status_text = "未匹配";
+                    $snapshot->status_level = 0;
+                    $snapshot->status_message = "状态变更为未匹配状态";
+                }
+            } else {
+                if ($snapshot->is_error) {
+                    // 1
+                    $snapshot->status_text = "请求错误";
+                    $snapshot->status_level = 2;
+                } else {
+                    // 2、5
+                    $snapshot->status_text = "匹配命中";
+                    $snapshot->status_level = 1;
+                }
+            }
+        }
+
+        // 错误则未完成
+        $snapshot->is_done = !$snapshot->is_error;
 	    $snapshot->saveOrFail();
     }
 
@@ -204,6 +264,8 @@ class MonitorService
 	    $monitorData = $monitor->data;
 	    $monitorData->last_error = $snapshot->is_error;
 	    $monitorData->last_match = $snapshot->is_match;
+        $monitorData->last_status_level = $snapshot->status_level;
+        $monitorData->last_status_text = $snapshot->status_text;
 
 	    $nowTime = Carbon::now();
 
@@ -236,49 +298,6 @@ class MonitorService
         /** @var User $user */
         $user = User::findOrFail($snapshot->monitor->project->user_id);
 
-        // 取出上一个快照，判断是否变化，如果没变化，就直接return了
-        try {
-            /** @var Snapshot $perSnapshot */
-            $perSnapshot = Snapshot::whereMonitorId($snapshot->monitor_id)->where('id', '<', $snapshot->id)->orderBy('id', 'desc')->firstOrFail();
-            if ($perSnapshot->is_match == $snapshot->is_match && $perSnapshot->is_error == $snapshot->is_error) {
-                // 如果匹配状态没变化，且错误状态没变化，就不通知
-                return;
-            }
-        } catch (ModelNotFoundException $e) {
-            // 如果第一次，且没有匹配也没错误，就不通知
-            if (!$snapshot->is_match && !$snapshot->is_error) {
-                return;
-            }
-        }
-
-        // 就4种状态
-        // 常态 - 未匹配
-        // 1 错误
-        // 2 匹配命中 如果错误，肯定不匹配
-        // 3 匹配恢复
-        // 不存在的 上次命中，这次错误恢复，因为上次错误，上次就肯定是未匹配，这次不可能匹配恢复
-        // 外加几种复合状态
-        // 4 错误恢复，即上次错误，这次正常且未匹配，就通知错误恢复
-        // 5 错误恢复匹配，即上次错误，这次错误恢复且匹配，就通知匹配
-
-        if (!$snapshot->is_error && !$snapshot->is_match) {
-            if ($perSnapshot->is_error){
-                // 4
-                $messageText = "错误恢复";
-            }else{
-                // 3
-                $messageText = "未匹配";
-            }
-        } else {
-            if ($snapshot->is_error) {
-                // 1
-                $messageText = "请求错误";
-            } else {
-                // 2、5
-                $messageText = "匹配命中";
-            }
-        }
-
-        \Mail::to($user)->send(new MonitorNotice($messageText, $snapshot));
+        $snapshot->is_notice && \Mail::to($user)->send(new MonitorNotice($snapshot));
     }
 }

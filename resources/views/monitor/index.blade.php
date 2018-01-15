@@ -85,13 +85,7 @@
                                         @if($monitor->is_enable===false)
                                             <span class="label label-warning">已停用</span>
                                         @endif
-                                        @if($monitor->data->last_error)
-                                            <span class="label label-danger">请求错误</span>
-                                        @elseif($monitor->data->last_match)
-                                            <span class="label label-warning">匹配命中</span>
-                                        @else
-                                            <span class="label label-primary">未匹配</span>
-                                        @endif
+                                        <span class="label label-{{ $monitor->data->lastStatusLevelLabel() }}">{{ $monitor->data->last_status_text }}</span>
                                         {{ $monitor->request_url }}</p>
                                     <ul class="list-unstyled">
                                         <li><label>请求间隔：</label> {{ $monitor->interval_normal }} 秒</li>

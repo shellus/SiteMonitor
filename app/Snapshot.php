@@ -42,6 +42,13 @@ use Illuminate\Support\Str;
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Snapshot whereIsMatch($value)
  * @property int $is_done
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Snapshot whereIsDone($value)
+ * @property int $is_notice
+ * @property int $status_level
+ * @property string|null $status_text
+ * @property string|null $status_message
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Snapshot whereStatusLevel($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Snapshot whereStatusMessage($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Snapshot whereStatusText($value)
  */
 class Snapshot extends Model
 {
@@ -49,6 +56,7 @@ class Snapshot extends Model
         'is_match' => 'boolean',
         'is_error' => 'boolean',
         'is_done' => 'boolean',
+        'is_notice' => 'boolean',
     ];
 
     public function monitor()

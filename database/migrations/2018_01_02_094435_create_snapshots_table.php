@@ -35,6 +35,12 @@ class CreateSnapshotsTable extends Migration
             $table->unsignedInteger('time_transport')->default(0);
             // 暂未设计“已通知”字段，因为，通知一旦发起，是保证成功的，即使未成功，也是放在队列中和失败队列任务中。暂不考虑永远失败的情况。
 
+            // todo 其实下面这一段数据，应该放到检查记录里，而不是快照中。但是目前一次检查只有一个快照的情况下，先放这里吧。
+            $table->boolean('is_notice')->default(false);
+            $table->unsignedInteger('status_level')->default(0);
+            $table->string('status_text')->nullable();
+            $table->text('status_message')->nullable();
+
             $table->timestamps();
 
             $table->foreign('monitor_id')->references('id')->on('monitors');
