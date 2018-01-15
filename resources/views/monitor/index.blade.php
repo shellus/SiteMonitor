@@ -42,7 +42,7 @@
             <form id="project-destroy" style="display: inline;" action="{{ route('project.destroy', $project->id) }}" method="post">
                 {{ csrf_field() }}
                 {{ method_field('delete') }}
-                <a onclick="$(this).parent().submit();"><span class="glyphicon glyphicon-trash" aria-hidden="true"></span></a>
+                <a href="#" onclick="$(this).parent().submit();return false;"><span class="glyphicon glyphicon-trash" aria-hidden="true"></span></a>
             </form>
 
             <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
