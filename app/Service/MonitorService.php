@@ -196,7 +196,6 @@ class MonitorService
 	    }
 
         $snapshot->is_notice = true;
-        $snapshot->status_level = 0;
         $snapshot->status_text = "未匹配";
 
         // 取出上一个快照，判断是否变化，如果没变化，就直接return了
@@ -206,12 +205,14 @@ class MonitorService
             if ($perSnapshot->is_match == $snapshot->is_match && $perSnapshot->is_error == $snapshot->is_error) {
                 // 如果匹配状态没变化，且错误状态没变化，就不通知
                 $snapshot->status_text = $perSnapshot->status_text;
+                $snapshot->status_level = 0;
                 $snapshot->is_notice = false;
             }
         } catch (ModelNotFoundException $e) {
             // 如果第一次，且没有匹配也没错误，就不通知
             if (!$snapshot->is_match && !$snapshot->is_error) {
                 $snapshot->status_text = "New";
+                $snapshot->status_level = 0;
                 $snapshot->is_notice = false;
             }
         }
