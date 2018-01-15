@@ -85,9 +85,9 @@
                                         @if($monitor->is_enable===false)
                                             <span class="label label-warning">已停用</span>
                                         @endif
-                                        @if($monitor->last_error==1)
+                                        @if($monitor->data->last_error)
                                             <span class="label label-danger">请求错误</span>
-                                        @elseif($monitor->last_match==1)
+                                        @elseif($monitor->data->last_match)
                                             <span class="label label-warning">匹配命中</span>
                                         @else
                                             <span class="label label-primary">未匹配</span>
