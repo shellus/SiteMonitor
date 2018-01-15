@@ -33,6 +33,10 @@ class MonitorJob implements ShouldQueue
      */
     public function handle()
     {
+        if ($this->monitor->is_enable===false){
+            MonitorService::joinQueue($this->monitor);
+            return;
+        }
 	    $snapshot = $this->monitor->snapshots()->create();
 
 	    $requestResult = MonitorService::request($this->monitor);
@@ -43,6 +47,6 @@ class MonitorJob implements ShouldQueue
 
         MonitorService::handleSnapshotNotice($snapshot);
 
-//        MonitorService::joinQueue($this->monitor);
+        MonitorService::joinQueue($this->monitor);
     }
 }

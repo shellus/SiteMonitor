@@ -82,6 +82,9 @@
                                     </p>
                                     <h3>{{ $monitor->title }}</h3>
                                     <p>
+                                        @if($monitor->is_enable===false)
+                                            <span class="label label-warning">已停用</span>
+                                        @endif
                                         @if($monitor->last_error==1)
                                             <span class="label label-danger">请求错误</span>
                                         @elseif($monitor->last_match==1)
