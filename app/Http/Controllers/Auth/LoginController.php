@@ -37,4 +37,9 @@ class LoginController extends Controller
     	$this->redirectTo=route('monitor.index');
         $this->middleware('guest')->except('logout');
     }
+
+    public function username()
+    {
+        return 'name';
+    }
 }
