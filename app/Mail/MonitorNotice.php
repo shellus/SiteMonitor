@@ -33,9 +33,10 @@ class MonitorNotice extends Mailable
      */
     public function build()
     {
-        $host = parse_url($this->snapshot->monitor->request_url, PHP_URL_HOST);
+//        $host = parse_url($this->snapshot->monitor->request_url, PHP_URL_HOST);
+        $title = $this->snapshot->monitor->title;
         return $this->view('emails.monitor.notice')
-            ->subject("[$host]: [$this->statusText]")
+            ->subject("[$title]: [$this->statusText]")
             ->with('statusText', $this->statusText)
             ->with('snapshot', $this->snapshot);
     }

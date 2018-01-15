@@ -238,6 +238,7 @@ class MonitorService
 
         // 取出上一个快照，判断是否变化，如果没变化，就直接return了
         try {
+            /** @var Snapshot $perSnapshot */
             $perSnapshot = Snapshot::whereMonitorId($snapshot->monitor_id)->where('id', '<', $snapshot->id)->orderBy('id', 'desc')->firstOrFail();
             if ($perSnapshot->is_match == $snapshot->is_match && $perSnapshot->is_error == $snapshot->is_error) {
                 // 如果匹配状态没变化，且错误状态没变化，就不通知
@@ -250,19 +251,31 @@ class MonitorService
             }
         }
 
-        // 四个状态
-        // $snapshot->is_match   $snapshot->is_error    !$snapshot->is_match   !$snapshot->is_error
-        // 匹配 未匹配 请求错误 错误恢复
+        // 就4种状态
+        // 常态 - 未匹配
+        // 1 错误
+        // 2 匹配命中 如果错误，肯定不匹配
+        // 3 匹配恢复
+        // 不存在的 上次命中，这次错误恢复，因为上次错误，上次就肯定是未匹配，这次不可能匹配恢复
+        // 外加几种复合状态
+        // 4 错误恢复，即上次错误，这次正常且未匹配，就通知错误恢复
+        // 5 错误恢复匹配，即上次错误，这次错误恢复且匹配，就通知匹配
 
-        // 到这里的，至于三种状态，1是错误恢复或匹配恢复，2是状态变化，3是错误变化, 如果有错误，就不考虑匹配变化
         if (!$snapshot->is_error && !$snapshot->is_match) {
-            $messageText = "恢复正常";
+            if ($perSnapshot->is_error){
+                // 4
+                $messageText = "错误恢复";
+            }else{
+                // 3
+                $messageText = "匹配恢复";
+            }
         } else {
             if ($snapshot->is_error) {
+                // 1
                 $messageText = "请求错误，{$snapshot->error_message}";
             } else {
-                $matcher = $snapshot->getMatcher();
-                $messageText = $matcher->getMessage();
+                // 2、5
+                $messageText = "匹配命中";
             }
         }
 
