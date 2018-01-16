@@ -26,6 +26,7 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
  * @method static \Illuminate\Database\Eloquent\Builder|\App\User whereRememberToken($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\User whereUpdatedAt($value)
  * @property-read \Illuminate\Database\Eloquent\Collection|\App\Project[] $projects
+ * @property-read \App\UserData $data
  */
 class User extends Authenticatable
 {
@@ -48,6 +49,12 @@ class User extends Authenticatable
     protected $hidden = [
         'password', 'remember_token',
     ];
+
+    public function data()
+    {
+        return $this->hasOne('App\UserData');
+    }
+
 	/**
 	 * @return Project
 	 */
@@ -56,12 +63,4 @@ class User extends Authenticatable
 		return $this->hasMany('App\Project');
 	}
 
-    public function defaultProject(){
-    	try{
-		    $project = $this->projects()->firstOrFail();
-	    }catch (ModelNotFoundException $e){
-    		$project = $this->projects()->create(['title'=>'默认项目']);
-	    }
-	    return $project;
-    }
 }

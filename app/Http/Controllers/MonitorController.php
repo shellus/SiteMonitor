@@ -17,14 +17,8 @@ class MonitorController extends Controller
 	 */
     public function index(Request $request)
     {
-    	$projects = \Auth::User()->projects;
-
-	    $projectId = $request->input('project');
-	    if ($projectId){
-		    $project = Project::whereUserId(\Auth::id())->findOrFail($projectId);
-	    }else{
-		    $project = \Auth::User()->defaultProject();
-	    }
+        $project = MonitorService::rememberProject(\Auth::user());
+        $projects = \Auth::user()->projects;
 
 	    return view('monitor.index')->with('project', $project)->with('projects', $projects);
     }

@@ -12,6 +12,7 @@ namespace App\Service;
 use App\Jobs\MonitorJob;
 use App\Mail\MonitorNotice;
 use App\Monitor;
+use App\Project;
 use App\Snapshot;
 use App\User;
 use Carbon\Carbon;
@@ -19,6 +20,43 @@ use Illuminate\Database\Eloquent\ModelNotFoundException;
 
 class MonitorService
 {
+    /**
+     * @param User $user
+     * @return Project
+     */
+    static public function rememberProject(User $user){
+
+        /** @var Project $project */
+
+        $projectId = \Request::input('project');
+        $isChange = true;
+
+        if ($projectId){
+            // 如果指定了，那就直接获取或失败
+            $project = Project::whereUserId(\Auth::id())->findOrFail($projectId);
+        }elseif ($projectId = $user->data->project_id){
+            // 如果用户数据有记录，那就判断记录是否存在，就不用更新了
+            try{
+                $project = Project::whereUserId(\Auth::id())->findOrFail($projectId);
+                $isChange = false;
+            }catch (ModelNotFoundException $e){
+
+            }
+        }elseif (!isset($project)){
+            try{
+                // 最后就选第一个
+                $project = $user->projects()->firstOrFail();
+            }catch (ModelNotFoundException $e){
+                // 没有就新建了
+                $project = $user->projects()->create(['title'=>'默认项目']);
+            }
+        }
+        if ($isChange){
+            $user->data->project_id = $project->id;
+            $user->data->saveOrFail();
+        }
+        return $project;
+    }
 	/**
 	 * 删除一个监控任务，及其关联数据
 	 *
