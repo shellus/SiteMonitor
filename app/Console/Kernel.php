@@ -24,8 +24,8 @@ class Kernel extends ConsoleKernel
      */
     protected function schedule(Schedule $schedule)
     {
-        // $schedule->command('inspire')
-        //          ->hourly();
+        // 清理一天前的快照 todo 快照body储存到磁盘后，改为删除15天前的数据
+        $schedule->command('snapshot:clear')->dailyAt('03:20');
     }
 
     /**
