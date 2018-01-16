@@ -71,13 +71,28 @@ php artisan db:seed
 ```
 
 
-8. 添加开机启动，你可以使用`/etc/rc.local`或`Supervisor`来实现这一点
+8. 添加开机启动
 ```bash
 php /path/to/SiteMonitor/artisan queue:work --queue=monitor
 ```
 
+你可以使用`/etc/rc.local`或`supervisor`或者`systemd`来实现这一点
+
+
+推荐的supervisor配置像这个样子
+```conf
+[program:site_monitor] 
+command=php /path/to/SiteMonitor/artisan queue:work --queue=monitor
+autostart=true
+autorestart=true
+user=www
+numprocs=5
+
+```
+
 
 9. 最后，配置你的nginx配置文件，将root目录绑定到`/path/to/SiteMonitor/public`吧。
+
 推荐的nginx配置像这个样子
 ```nginxconf
 server {
