@@ -37,8 +37,11 @@
                     @endforeach
                 </ul>
             </div>
+            &nbsp;
             <a href="{{ route('project.create') }}" data-toggle="modal" data-target="#myModal"><span class="glyphicon glyphicon-plus" aria-hidden="true"></span></a>
+            &nbsp;
             <a href="{{ route('project.edit', $project->id) }}" data-toggle="modal" data-target="#myModal"><span class="glyphicon glyphicon-edit" aria-hidden="true"></span></a>
+            &nbsp;
             <form id="project-destroy" style="display: inline;" action="{{ route('project.destroy', $project->id) }}" method="post">
                 {{ csrf_field() }}
                 {{ method_field('delete') }}
