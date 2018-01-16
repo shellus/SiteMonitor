@@ -12,15 +12,19 @@
 
 >!!! 如果你在安装过程中遇到任何问题，请不要犹豫，立即提出Issue。
 
+- 需要php版本7.0以上，推荐7.2
+- 需要redis-server
+
 1. 拉取代码，使用 
 ```bash
 git clone https://github.com/shellus/SiteMonitor.git
+cd SiteMonitor
 ```
 
 
 2. 为储存目录增加写入权限
 ```bash
-chmod +w -R SiteMonitor/storage
+chmod 777 -R storage
 ```
 
 
@@ -80,7 +84,7 @@ server {
 
         listen 80;
 
-        root /path/to/SiteMonitor/artisan;
+        root /path/to/SiteMonitor/public;
         index index.html index.php;
 
         server_name _;
