@@ -15,14 +15,10 @@ use Illuminate\Support\Str;
  * @property int $is_error 如果有错误，匹配就肯定是false
  * @property string $error_message
  * @property string $http_status_code
- * @property string $headers
- * @property string $body_content
  * @property \Carbon\Carbon|null $created_at
  * @property \Carbon\Carbon|null $updated_at
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Snapshot whereBodyContent($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Snapshot whereCreatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Snapshot whereErrorMessage($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Snapshot whereHeaders($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Snapshot whereHttpStatusCode($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Snapshot whereId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Snapshot whereIsError($value)
@@ -49,6 +45,10 @@ use Illuminate\Support\Str;
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Snapshot whereStatusLevel($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Snapshot whereStatusMessage($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Snapshot whereStatusText($value)
+ * @property int|null $header_size
+ * @property string|null $response_path
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Snapshot whereHeaderSize($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Snapshot whereResponsePath($value)
  */
 class Snapshot extends Model
 {
@@ -59,9 +59,66 @@ class Snapshot extends Model
         'is_notice' => 'boolean',
     ];
 
+    protected $fillable = ['monitor_id'];
+
     public function monitor()
     {
         return $this->belongsTo('App\Monitor');
+    }
+
+    /**
+     * 插入数据库记录前调用此方法
+     * @param $userId
+     * @param $response
+     * @return string
+     * @throws \Exception
+     */
+    public function storeSnapshotResponse($userId, $response){
+        $date = date('Y-m-d');
+        $path = "/$userId/{$this->monitor_id}/$date/{$this->id}.bin";
+        if (!\Storage::disk('snapshot')->put($path, $response)){
+            throw new \Exception("Put a file $path to storage return false !");
+        }
+        return $path;
+    }
+
+    /**
+     * 删除数据库记录前调用这个方法
+     * @throws \Exception
+     */
+    public function deleteResponseFile(){
+        if (!\Storage::disk('snapshot')->delete($this->response_path)){
+            throw new \Exception("Delete a file {$this->response_path} return false !");
+        }
+    }
+
+    /**
+     *
+     * @return string
+     */
+    public function getResponse()
+    {
+        return \Storage::disk('snapshot')->get($this->response_path);
+    }
+
+    /**
+     *
+     * @return string
+     */
+    public function getHeaderStr()
+    {
+        $response = \Storage::disk('snapshot')->get($this->response_path);
+        return substr($response, 0, $this->header_size);
+    }
+
+    /**
+     *
+     * @return string
+     */
+    public function getBody()
+    {
+        $response = \Storage::disk('snapshot')->get($this->response_path);
+        return substr($response, $this->header_size);
     }
 
 	/**

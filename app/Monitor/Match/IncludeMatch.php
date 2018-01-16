@@ -22,7 +22,7 @@ class IncludeMatch extends MatchBase
     public function __construct(Snapshot $snapshot)
     {
         $this->snapshot = $snapshot;
-        $this->isMatch = strpos($this->snapshot->body_content, $this->snapshot->monitor->match_content) !== false;
+        $this->isMatch = strpos($this->snapshot->getBody(), $this->snapshot->monitor->match_content) !== false;
     }
 
     public function getMessage()

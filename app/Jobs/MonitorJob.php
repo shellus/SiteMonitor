@@ -4,7 +4,7 @@ namespace App\Jobs;
 
 use App\Monitor;
 use App\Service\MonitorService;
-use App\Snapshot;
+use App\Service\SnapshotService;
 use Illuminate\Bus\Queueable;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Queue\InteractsWithQueue;
@@ -37,7 +37,7 @@ class MonitorJob implements ShouldQueue
             MonitorService::joinQueue($this->monitor);
             return;
         }
-	    $snapshot = $this->monitor->snapshots()->create();
+	    $snapshot = SnapshotService::createSnapshot(['monitor_id'=>$this->monitor->id]);
 
 	    $requestResult = MonitorService::request($this->monitor);
 

@@ -26,8 +26,8 @@ class CreateSnapshotsTable extends Migration
 
             $table->text('error_message')->nullable(); // 自定义拼合文本，人类可读
             $table->string('http_status_code')->nullable();
-            $table->binary('headers'); // 包含首行，如果有跳转，将包含多次的header。
-            $table->binary('body_content');
+            $table->unsignedInteger('header_size')->nullable(); // 包含首行，如果有跳转，将包含多次的header。
+            $table->string('response_path')->nullable(); // 包含首行，如果有跳转，将包含多次的header。
 
             $table->unsignedInteger('time_total')->default(0); // 从dns解析，到获取到最后一字节的时间
             $table->unsignedInteger('time_dns')->default(0);
@@ -46,9 +46,6 @@ class CreateSnapshotsTable extends Migration
             $table->foreign('monitor_id')->references('id')->on('monitors');
         });
 
-        // 注意： header和body使用二进制储存，用以兼容所有编码格式，header中也可能出现非ASCII编码。
-        \DB::statement('ALTER TABLE snapshots MODIFY headers BLOB NULL;');
-	    \DB::statement('ALTER TABLE snapshots MODIFY body_content MEDIUMBLOB NULL;');
     }
 
     /**
