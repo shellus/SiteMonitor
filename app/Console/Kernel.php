@@ -24,8 +24,8 @@ class Kernel extends ConsoleKernel
      */
     protected function schedule(Schedule $schedule)
     {
-        // $schedule->command('inspire')
-        //          ->hourly();
+        // 删除15天前的快照
+        $schedule->command('snapshot:clear --deadline-hour=360')->dailyAt('03:20');
     }
 
     /**

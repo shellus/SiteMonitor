@@ -24,41 +24,51 @@
         }
     </style>
     <div class="container">
+        <div class="page-header">
+            <h1>控制台 - HTTP监控</h1>
+        </div>
         <div class="row">
-            <h2>控制台 - HTTP监控</h2>
-            项目：
-            <div class="btn-group">
-                <button class="btn btn-default btn-sm dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                    {{ $project->title }} <span class="caret"></span>
-                </button>
-                <ul class="dropdown-menu">
-                    @foreach($projects as $projectItem)
-                        <li><a href="{{ route('monitor.index') . "?project={$projectItem->id}" }}">{{ $projectItem->title }}</a></li>
-                    @endforeach
-                </ul>
-            </div>
-            <a href="{{ route('project.create') }}" data-toggle="modal" data-target="#myModal"><span class="glyphicon glyphicon-plus" aria-hidden="true"></span></a>
-            <a href="{{ route('project.edit', $project->id) }}" data-toggle="modal" data-target="#myModal"><span class="glyphicon glyphicon-edit" aria-hidden="true"></span></a>
-            <form id="project-destroy" style="display: inline;" action="{{ route('project.destroy', $project->id) }}" method="post">
-                {{ csrf_field() }}
-                {{ method_field('delete') }}
-                <a href="#" onclick="$(this).parent().submit();return false;"><span class="glyphicon glyphicon-trash" aria-hidden="true"></span></a>
-            </form>
+            <div class="col-md-12">
+                项目：
+                <div style="display: inline-block;" class="dropdown">
+                    <button class="btn btn-default dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+                        {{ $project->title }}
+                        <span class="caret"></span>
+                    </button>
+                    <ul class="dropdown-menu" aria-labelledby="dropdownMenu1">
+                        @foreach($projects as $projectItem)
+                            <li><a href="{{ route('monitor.index') . "?project={$projectItem->id}" }}">{{ $projectItem->title }}</a></li>
+                        @endforeach
+                    </ul>
+                </div>
+                &nbsp;
+                <a href="{{ route('project.create') }}" data-toggle="modal" data-target="#myModal"><span class="glyphicon glyphicon-plus" aria-hidden="true"></span></a>
+                &nbsp;
+                <a href="{{ route('project.edit', $project->id) }}" data-toggle="modal" data-target="#myModal"><span class="glyphicon glyphicon-edit" aria-hidden="true"></span></a>
+                &nbsp;
+                <form id="project-destroy" style="display: inline;" action="{{ route('project.destroy', $project->id) }}" method="post">
+                    {{ csrf_field() }}
+                    {{ method_field('delete') }}
+                    <a href="#" onclick="$(this).parent().submit();return false;"><span class="glyphicon glyphicon-trash" aria-hidden="true"></span></a>
+                </form>
 
-            <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
-                <div class="modal-dialog" role="document">
-                    <div class="modal-content">
+                <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+                    <div class="modal-dialog" role="document">
+                        <div class="modal-content">
 
+                        </div>
                     </div>
                 </div>
+                <div class="text-right">
+                    <a class="btn btn-success" href="{{ route('monitor.create') }}">
+                        增加监控
+                        <span class="glyphicon glyphicon-plus" aria-hidden="true"></span>
+                    </a>
+                </div>
             </div>
-            <div class="text-right">
-                <a class="btn btn-success" href="{{ route('monitor.create') }}">
-                    增加监控
-                    <span class="glyphicon glyphicon-plus" aria-hidden="true"></span>
-                </a>
-            </div>
-            <br>
+        </div>
+        <br>
+        <div class="row">
             <div class="panel panel-default">
                 <div class="panel-heading">监控列表</div>
 

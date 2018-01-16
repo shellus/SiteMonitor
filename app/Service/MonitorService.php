@@ -12,6 +12,7 @@ namespace App\Service;
 use App\Jobs\MonitorJob;
 use App\Mail\MonitorNotice;
 use App\Monitor;
+use App\Project;
 use App\Snapshot;
 use App\User;
 use Carbon\Carbon;
@@ -19,24 +20,63 @@ use Illuminate\Database\Eloquent\ModelNotFoundException;
 
 class MonitorService
 {
-	/**
-	 * 删除一个监控任务，及其关联数据
-	 *
-	 * @param $monitorId
-	 *
-	 * @return bool
-	 */
-	static public function deleteMonitor($monitorId){
-		/** @var Monitor $monitor */
-		$monitor = Monitor::findOrFail($monitorId);
+    /**
+     * @param User $user
+     * @return Project
+     */
+    static public function rememberProject(User $user){
 
-		\DB::beginTransaction();
-		$monitor->snapshots()->delete();
-		$monitor->data()->delete();
-		$monitor->delete();
-		\DB::commit();
-		return true;
-	}
+        /** @var Project $project */
+
+        $projectId = \Request::input('project');
+        $isChange = true;
+
+        if ($projectId){
+            // 如果指定了，那就直接获取或失败
+            $project = Project::whereUserId(\Auth::id())->findOrFail($projectId);
+        }elseif ($projectId = $user->data->project_id){
+            // 如果用户数据有记录，那就判断记录是否存在，就不用更新了
+            try{
+                $project = Project::whereUserId(\Auth::id())->findOrFail($projectId);
+                $isChange = false;
+            }catch (ModelNotFoundException $e){
+
+            }
+        }elseif (!isset($project)){
+            try{
+                // 最后就选第一个
+                $project = $user->projects()->firstOrFail();
+            }catch (ModelNotFoundException $e){
+                // 没有就新建了
+                $project = $user->projects()->create(['title'=>'默认项目']);
+            }
+        }
+        if ($isChange){
+            $user->data->project_id = $project->id;
+            $user->data->saveOrFail();
+        }
+        return $project;
+    }
+
+    /**
+     * 删除一个监控任务，及其关联数据
+     *
+     * @param $monitorId
+     *
+     * @return bool
+     */
+    static public function deleteMonitor($monitorId)
+    {
+        /** @var Monitor $monitor */
+        $monitor = Monitor::findOrFail($monitorId);
+
+        \DB::beginTransaction();
+        SnapshotService::deleteSnapshotByMonitorId($monitor->project->user->id, $monitorId);
+        $monitor->data()->delete();
+        $monitor->delete();
+        \DB::commit();
+        return true;
+    }
 
 	static public function createMonitor(array $attributes = []){
 		\DB::beginTransaction();
@@ -150,13 +190,10 @@ class MonitorService
 
         curl_close($curlHandle);
 
-        $headerSize = $curlInfo['header_size'];
-	    $curlInfo['headers'] = substr($response, 0, $headerSize);
-	    $curlInfo['body'] = substr($response, $headerSize);
-	    $curlInfo['curl_error_no'] = $curlErrorNo;
-	    $curlInfo['curl_error_message'] = $curlErrorMessage;
-
-	    return $curlInfo;
+        $curlInfo['response'] = $response;
+        $curlInfo['curl_error_no'] = $curlErrorNo;
+        $curlInfo['curl_error_message'] = $curlErrorMessage;
+        return $curlInfo;
     }
 
 
@@ -164,12 +201,12 @@ class MonitorService
 	 * @param $snapshot Snapshot
 	 * @param $requestResult array
 	 *
-	 * @return Snapshot
 	 */
     static public function storeSnapshot($snapshot, $requestResult){
+        $userId = $snapshot->monitor->project->user->id;
+        $snapshot->header_size = $requestResult['header_size'];
+        $snapshot->response_path = $snapshot->storeSnapshotResponse($userId, $requestResult['response']);
 	    $snapshot->http_status_code = $requestResult['http_code'];
-	    $snapshot->headers = $requestResult['headers'];
-	    $snapshot->body_content = $requestResult['body'];
 
 	    $snapshot->time_total = bcmul($requestResult['total_time'], 1000, 0);
 	    $snapshot->time_dns = bcmul($requestResult['namelookup_time'], 1000, 0);
