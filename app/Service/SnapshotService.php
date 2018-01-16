@@ -41,7 +41,7 @@ class SnapshotService
      */
     static public function deleteSnapshotByMonitorId($userId, $monitorId){
         $path = "/$userId/$monitorId/";
-        if (!\Storage::deleteDirectory($path)){
+        if (!\Storage::disk('snapshot')->deleteDirectory($path)){
             throw new \Exception("Delete snapshot by monitor id dir {$path} return false !");
         }
         return Snapshot::whereMonitorId($monitorId)->delete();
