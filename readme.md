@@ -86,8 +86,8 @@ command=php /path/to/SiteMonitor/artisan queue:work --queue=monitor
 autostart=true
 autorestart=true
 user=www
-process_name = %(program_name)-%(process_num)
-numprocs=5
+numprocs=10
+process_name=%(program_name)s_%(process_num)02d
 
 ```
 
