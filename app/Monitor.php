@@ -89,7 +89,7 @@ class Monitor extends Model
         return "M-" . str_pad(self::count()+3823, 5, '0', STR_PAD_LEFT);
     }
     public function flotData(){
-        $snaps = $this->snapshots()->whereIsDone(1)->orderBy('id', 'desc')->where('updated_at', '>', Carbon::now()->subHour(1))->get(['id', 'time_total', 'created_at']);
+        $snaps = $this->snapshots()->whereIsDone(1)->orderBy('id', 'desc')->where('created_at', '>', Carbon::now()->subHour(1))->get(['id', 'time_total', 'created_at']);
         $flotData = [];
         for($i=0;$i<count($snaps);$i++){
             $flotData[] = [$snaps[$i]->created_at->getTimestamp(), $snaps[$i]->time_total];

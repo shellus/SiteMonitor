@@ -43,6 +43,8 @@ class CreateSnapshotsTable extends Migration
 
             $table->timestamps();
 
+            $table->index(['monitor_id', 'is_done', 'created_at']);
+
             $table->foreign('monitor_id')->references('id')->on('monitors');
         });
 
