@@ -318,15 +318,13 @@ class MonitorService
 		    $monitorData->last_match_time = $nowTime;
 	    }
 
-	    $monitorData->last_request_time = $nowTime;
+	    // 至少30秒更新一次内容，不足30秒不更新
+        if ($monitorData->last_request_time->diffInSeconds($nowTime) >= 30){
+            $monitorData->time_total_average_1hour = $monitor->snapshots()->whereIsDone(1)->where('created_at', '>', Carbon::now()->subHour(1))->avg('time_total');
+            $monitorData->last_1hour_table_cache = json_encode($monitor->flotData());
+        }
 
-	    $monitorData->time_total_average_15minute = $monitor->snapshots()->whereIsDone(1)->where('created_at', '>', Carbon::now()->subMinute(15))->avg('time_total');
-	    $monitorData->time_total_average_30minute = $monitor->snapshots()->whereIsDone(1)->where('created_at', '>', Carbon::now()->subMinute(30))->avg('time_total');
-	    $monitorData->time_total_average_1hour = $monitor->snapshots()->whereIsDone(1)->where('created_at', '>', Carbon::now()->subHour(1))->avg('time_total');
-	    $monitorData->time_total_average_12hour = $monitor->snapshots()->whereIsDone(1)->where('created_at', '>', Carbon::now()->subHour(12))->avg('time_total');
-	    $monitorData->time_total_average_24hour = $monitor->snapshots()->whereIsDone(1)->where('created_at', '>', Carbon::now()->subHour(24))->avg('time_total');
-
-	    $monitorData->last_1hour_table_cache = json_encode($monitor->flotData());
+        $monitorData->last_request_time = $nowTime;
 
 	    $monitorData->saveOrFail();
     }

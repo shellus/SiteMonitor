@@ -2,6 +2,7 @@
 
 namespace App;
 
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
 
 /**
@@ -11,9 +12,9 @@ use Illuminate\Database\Eloquent\Model;
  * @property string|null $last_1hour_table_cache
  * @property int $last_error
  * @property int $last_match
- * @property string|null $last_error_time
- * @property string|null $last_match_time
- * @property string|null $last_request_time
+ * @property Carbon|null $last_error_time
+ * @property Carbon|null $last_match_time
+ * @property Carbon|null $last_request_time
  * @property int $time_total_average_15minute
  * @property int $time_total_average_30minute
  * @property int $time_total_average_1hour
