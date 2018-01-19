@@ -244,8 +244,8 @@ class MonitorService
                 }else{
                     // 如果匹配状态没变化，且错误状态没变化，就不通知
                     $snapshot->status_text = $perSnapshot->status_text;
-                    $snapshot->status_level = $perSnapshot->status_level;
                 }
+                $snapshot->status_level = $perSnapshot->status_level;
                 $snapshot->is_notice = false;
             }
         } catch (ModelNotFoundException $e) {
@@ -257,7 +257,7 @@ class MonitorService
             }
         }
 
-        if ($snapshot->status_level !== 0){
+        if ($snapshot->is_notice !== false){
             // 就4种状态
             // 常态 - 未匹配
             // 1 错误
@@ -294,7 +294,7 @@ class MonitorService
         }
 
         // 错误则未完成
-        $snapshot->is_done = !$snapshot->is_error;
+        $snapshot->is_done = true;
 	    $snapshot->saveOrFail();
     }
 
