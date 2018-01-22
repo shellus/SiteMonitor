@@ -241,11 +241,12 @@ class MonitorService
             if ($perSnapshot->is_match == $snapshot->is_match && $perSnapshot->is_error == $snapshot->is_error) {
                 if (!$snapshot->is_match && !$snapshot->is_error) {
                     $snapshot->status_text = "未匹配";
+                    $snapshot->status_level = 0;
                 }else{
                     // 如果匹配状态没变化，且错误状态没变化，就不通知
                     $snapshot->status_text = $perSnapshot->status_text;
+                    $snapshot->status_level = $perSnapshot->status_level;
                 }
-                $snapshot->status_level = $perSnapshot->status_level;
                 $snapshot->is_notice = false;
             }
         } catch (ModelNotFoundException $e) {
