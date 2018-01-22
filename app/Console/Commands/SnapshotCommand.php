@@ -15,7 +15,7 @@ class SnapshotCommand extends Command
      *
      * @var string
      */
-    protected $signature = 'snapshot:clear {--deadline-hour=24}';
+    protected $signature = 'snapshot:clear {deadline-second}';
 
     /**
      * The console command description.
@@ -41,7 +41,7 @@ class SnapshotCommand extends Command
      */
     public function handle()
     {
-        $deadlineTime = Carbon::now()->subHour($this->option('deadline-hour'));
+        $deadlineTime = Carbon::now()->subSecond($this->argument('deadline-second'));
         $jobStartTime = Carbon::now();
         $count = 0;
 

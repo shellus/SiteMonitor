@@ -24,8 +24,9 @@ class Kernel extends ConsoleKernel
      */
     protected function schedule(Schedule $schedule)
     {
-        // 删除15天前的快照
-        $schedule->command('snapshot:clear --deadline-hour=360')->dailyAt('03:20');
+	    // 默认删除1天前的快照，每分钟清理
+    	$second = env("SNAPSHOT_CLEAR_DEADLINE_SECOND", 86400);
+        $schedule->command("snapshot:clear {$second}")->everyMinute();
     }
 
     /**
