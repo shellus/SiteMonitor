@@ -52,14 +52,6 @@
                     <a href="#" onclick="$(this).parent().submit();return false;"><span class="glyphicon glyphicon-trash" aria-hidden="true"></span></a>
                 </form>
 
-                <div class="modal fade" id="snapshotModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
-                    <div class="modal-dialog" role="document">
-                        <div class="modal-content">
-
-                        </div>
-                    </div>
-                </div>
-
                 <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
                     <div class="modal-dialog" role="document">
                         <div class="modal-content">
@@ -84,13 +76,21 @@
                 <div class="panel-body">
                     <div class="row">
                         @foreach($project->monitors()->with('data')->get() as $monitor)
+                            <div class="modal fade snapshotModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" id="snapshotModal-{{ $monitor->id }}">
+                                <div class="modal-dialog" role="document">
+                                    <div class="modal-content">
+
+                                    </div>
+                                </div>
+                            </div>
+
                             <div class="col-sm-6 col-md-4">
                                 <div class="thumbnail">
                                     <div class="demo-container" data-flot="{{ $monitor->data->last_1hour_table_cache }}">
                                         <div class="demo-placeholder placeholder"></div>
                                     </div>
                                     <p>
-                                        <a class="btn btn-default btn-sm" href="{{ route('snapshot.index')."?monitor_id=$monitor->id" }}" data-toggle="modal" data-target="#snapshotModal">
+                                        <a class="btn btn-default btn-sm" href="{{ route('snapshot.index')."?monitor_id=$monitor->id" }}" data-toggle="modal" data-target="#snapshotModal-{{ $monitor->id }}">
                                             快照列表
                                             <span class="glyphicon glyphicon-list" aria-hidden="true"></span>
                                         </a>
@@ -148,8 +148,8 @@
 
 
     <script>
-        $(document).on("click", '#snapshotModal .pagination a', function(event){
-            $("#snapshotModal .modal-content").load($(this).attr("href"));
+        $(document).on("click", '.snapshotModal .pagination a', function(event){
+            $(this).parents(".modal-content").load($(this).attr("href"));
             event.preventDefault();
         });
     </script>
