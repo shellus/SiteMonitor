@@ -24,7 +24,7 @@ class AppServiceProvider extends ServiceProvider
 
 	    $log_name = 'monitor';
 	    $log_file = storage_path('logs' . DIRECTORY_SEPARATOR . $log_name . '.log');
-	    $sqlLogger = new Logger($log_name, [new StreamHandler($log_file), config('app.log_level')]);
+	    $sqlLogger = new Logger($log_name, [new StreamHandler($log_file, config('app.log_level'))]);
 	    $this->app->instance('monitorLog', $sqlLogger);
     }
 
