@@ -4,6 +4,8 @@ namespace App\Providers;
 
 use Carbon\Carbon;
 use Illuminate\Support\ServiceProvider;
+use Monolog\Logger;
+use Monolog\Handler\StreamHandler;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -19,6 +21,11 @@ class AppServiceProvider extends ServiceProvider
 
         // varchar索引长度报错修复
         \Schema::defaultStringLength(191);
+
+	    $log_name = 'monitor';
+	    $log_file = storage_path('logs' . DIRECTORY_SEPARATOR . $log_name . '.log');
+	    $sqlLogger = new Logger($log_name, [new StreamHandler($log_file)]);
+	    $this->app->instance('monitorLog', $sqlLogger);
     }
 
     /**
