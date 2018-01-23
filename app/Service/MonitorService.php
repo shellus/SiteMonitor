@@ -139,8 +139,13 @@ class MonitorService
                 $interval = $monitor->interval_match;
             }
         } catch (ModelNotFoundException $e) {
-            // 第一次就立刻运行吧
-            $interval = 0;
+	        if ($monitor->is_enable){
+		        // 第一次就立刻运行吧
+		        $interval = 0;
+	        }else{
+	        	// 未启用的，1分钟后再运行。
+		        $interval = 60;
+	        }
         }
 
         $time = Carbon::now()->addSecond($interval);
