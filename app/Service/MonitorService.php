@@ -157,6 +157,7 @@ class MonitorService
      */
     static public function request(Monitor $monitor)
     {
+	    \MonitorLog::debug("执行HTTP请求，监控ID[{$monitor->id}]");
         $curlHandle = curl_init();
 
         curl_setopt($curlHandle, CURLOPT_SAFE_UPLOAD, true); // 禁止body中使用@上传文件
@@ -193,6 +194,8 @@ class MonitorService
         $curlInfo['response'] = $response;
         $curlInfo['curl_error_no'] = $curlErrorNo;
         $curlInfo['curl_error_message'] = $curlErrorMessage;
+
+	    \MonitorLog::debug("HTTP请求完成，监控ID[{$monitor->id}]");
         return $curlInfo;
     }
 

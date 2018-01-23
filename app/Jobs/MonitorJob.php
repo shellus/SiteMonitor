@@ -33,10 +33,14 @@ class MonitorJob implements ShouldQueue
      */
     public function handle()
     {
+	    \MonitorLog::debug("队列运行，监控ID[{$this->monitor->id}]，标题[{$this->monitor->title}]");
+
         if ($this->monitor->is_enable===false){
+        	\MonitorLog::notice("未启用的监控ID[{$this->monitor->id}], 跳过执行并再进入队列");
             MonitorService::joinQueue($this->monitor);
             return;
         }
+
 	    $snapshot = SnapshotService::createSnapshot(['monitor_id'=>$this->monitor->id]);
 
 	    $requestResult = MonitorService::request($this->monitor);
@@ -48,5 +52,7 @@ class MonitorJob implements ShouldQueue
         MonitorService::handleSnapshotNotice($snapshot);
 
         MonitorService::joinQueue($this->monitor);
+
+	    \MonitorLog::debug("队列完成，监控ID[{$this->monitor->id}]");
     }
 }
