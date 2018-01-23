@@ -61,6 +61,14 @@ class Snapshot extends Model
 
     protected $fillable = ['monitor_id'];
 
+    public function getLabel(){
+        $arr = [
+            "primary",
+            "warning",
+            "danger",
+        ];
+        return $arr[$this->status_level];
+    }
     public function monitor()
     {
         return $this->belongsTo('App\Monitor');

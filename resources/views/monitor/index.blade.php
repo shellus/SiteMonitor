@@ -52,6 +52,14 @@
                     <a href="#" onclick="$(this).parent().submit();return false;"><span class="glyphicon glyphicon-trash" aria-hidden="true"></span></a>
                 </form>
 
+                <div class="modal fade" id="snapshotModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+                    <div class="modal-dialog" role="document">
+                        <div class="modal-content">
+
+                        </div>
+                    </div>
+                </div>
+
                 <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
                     <div class="modal-dialog" role="document">
                         <div class="modal-content">
@@ -59,6 +67,7 @@
                         </div>
                     </div>
                 </div>
+
                 <div class="text-right">
                     <a class="btn btn-success" href="{{ route('monitor.create') }}">
                         增加监控
@@ -81,7 +90,7 @@
                                         <div class="demo-placeholder placeholder"></div>
                                     </div>
                                     <p>
-                                        <a class="btn btn-default btn-sm" href="#">
+                                        <a class="btn btn-default btn-sm" href="{{ route('snapshot.index')."?monitor_id=$monitor->id" }}" data-toggle="modal" data-target="#snapshotModal">
                                             快照列表
                                             <span class="glyphicon glyphicon-list" aria-hidden="true"></span>
                                         </a>
@@ -136,6 +145,14 @@
 @section('foot')
     <script src="https://cdn.bootcss.com/flot/0.8.3/jquery.flot.min.js"></script>
     <script src="https://cdn.bootcss.com/flot/0.8.3/jquery.flot.time.min.js"></script>
+
+
+    <script>
+        $(document).on("click", '#snapshotModal .pagination a', function(event){
+            $("#snapshotModal .modal-content").load($(this).attr("href"));
+            event.preventDefault();
+        });
+    </script>
 
     <script type="text/javascript">
         $("<div id='tooltip'></div>").css({
