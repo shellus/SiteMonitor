@@ -17,7 +17,7 @@ class SnapshotController extends Controller
     {
         /** @var Monitor $monitor */
         $monitor = Monitor::findOrFail($request->input('monitor_id'));
-        $snapshots = $monitor->snapshots()->paginate(100, ['id', 'created_at', 'is_notice', 'status_level', 'status_text']);
+        $snapshots = $monitor->snapshots()->orderBy('id', 'desc')->paginate(100, ['id', 'created_at', 'is_notice', 'status_level', 'status_text']);
 
         return view('snapshot.index', ['snapshots' => $snapshots]);
     }
