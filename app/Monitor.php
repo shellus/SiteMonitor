@@ -51,16 +51,20 @@ use Illuminate\Database\Eloquent\ModelNotFoundException;
  * @property-read \App\Project $project
  * @property int $request_follow_location
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Monitor whereRequestFollowLocation($value)
+ * @property bool $is_public
+ * @property-read \Illuminate\Database\Eloquent\Collection|\App\User[] $watchUsers
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Monitor whereIsPublic($value)
  */
 class Monitor extends Model
 {
     protected $casts = [
+        'is_public' => 'boolean',
         'is_enable' => 'boolean',
         'request_nobody' => 'boolean',
         'match_reverse' => 'boolean',
         'request_follow_location' => 'boolean',
     ];
-	protected $fillable = ['project_id','title','request_url','request_method','request_headers','request_body','is_enable','request_nobody','interval_normal','interval_match','interval_error','match_reverse','match_type','match_content','request_follow_location'];
+	protected $fillable = ['project_id','title','request_url','request_method','request_headers','request_body','is_enable','request_nobody','interval_normal','interval_match','interval_error','match_reverse','match_type','match_content','request_follow_location', 'is_public'];
 
     /**
      * 最后一个快照，如果没有快照，将抛出异常
@@ -95,5 +99,13 @@ class Monitor extends Model
             $flotData[] = [$snaps[$i]->created_at->getTimestamp(), $snaps[$i]->time_total];
         }
         return $flotData;
+    }
+
+    /**
+     * 查看关注的用户
+     */
+    public function watchUsers()
+    {
+        return $this->belongsToMany('App\User','watch_monitor', 'user_id', 'monitor_id');
     }
 }

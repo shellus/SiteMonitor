@@ -26,6 +26,7 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
  * @method static \Illuminate\Database\Eloquent\Builder|\App\User whereUpdatedAt($value)
  * @property-read \Illuminate\Database\Eloquent\Collection|\App\Project[] $projects
  * @property-read \App\UserData $data
+ * @property-read \Illuminate\Database\Eloquent\Collection|\App\Monitor[] $watchMonitors
  */
 class User extends Authenticatable
 {
@@ -49,17 +50,27 @@ class User extends Authenticatable
         'password', 'remember_token',
     ];
 
+    /**
+     * 用户热数据
+     */
     public function data()
     {
         return $this->hasOne('App\UserData');
     }
 
 	/**
-	 * @return Project
+     * 用户拥有的项目
 	 */
 	public function projects()
 	{
 		return $this->hasMany('App\Project');
 	}
 
+    /**
+     * 查看用户关注的监控
+     */
+    public function watchMonitors()
+    {
+        return $this->belongsToMany('App\Monitor','watch_monitor', 'user_id', 'monitor_id');
+    }
 }

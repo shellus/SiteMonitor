@@ -5,6 +5,7 @@ namespace App;
 use Illuminate\Database\Eloquent\Model;
 
 /**
+ * 储存用户热数据，就是经常修改的。用来冷热数据垂直分表
  * App\UserData
  *
  * @property int $user_id

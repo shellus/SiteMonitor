@@ -61,6 +61,10 @@ class Snapshot extends Model
 
     protected $fillable = ['monitor_id'];
 
+    /**
+     * 显示用的、
+     * @return mixed
+     */
     public function getLabel(){
         $arr = [
             "primary",
@@ -69,6 +73,10 @@ class Snapshot extends Model
         ];
         return $arr[$this->status_level];
     }
+
+    /**
+     * 快照所属的监控
+     */
     public function monitor()
     {
         return $this->belongsTo('App\Monitor');
@@ -110,8 +118,7 @@ class Snapshot extends Model
     }
 
     /**
-     *
-     * @return string
+     * @return bool|string
      */
     public function getHeaderStr()
     {
@@ -120,8 +127,7 @@ class Snapshot extends Model
     }
 
     /**
-     *
-     * @return string
+     * @return bool|string
      */
     public function getBody()
     {

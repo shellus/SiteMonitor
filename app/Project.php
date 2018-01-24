@@ -25,12 +25,15 @@ class Project extends Model
 {
 	protected $fillable = ['title','user_id'];
 
+    /**
+     * 项目所属的用户
+     */
 	public function user()
 	{
 		return $this->belongsTo('App\User');
 	}
 	/**
-	 * @return Monitor
+     * 项目里的监控
 	 */
 	public function monitors()
 	{

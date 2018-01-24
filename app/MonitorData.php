@@ -6,6 +6,7 @@ use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
 
 /**
+ * 监控的热数据，用来冷热垂直分表
  * App\MonitorData
  *
  * @property int $monitor_id
