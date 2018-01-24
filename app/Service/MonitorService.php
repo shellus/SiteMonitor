@@ -328,7 +328,7 @@ class MonitorService
 	    }
 
 	    // 至少30秒更新一次内容，不足30秒不更新
-        if ($monitorData->last_request_time->diffInSeconds($nowTime) >= 30){
+        if (!isset($monitorData->last_request_time) || $monitorData->last_request_time->diffInSeconds($nowTime) >= 30){
             $monitorData->time_total_average_1hour = $monitor->snapshots()->whereIsDone(1)->where('created_at', '>', Carbon::now()->subHour(1))->avg('time_total');
             $monitorData->last_1hour_table_cache = json_encode($monitor->flotData());
         }
