@@ -101,6 +101,9 @@
                                     </p>
                                     <h3>{{ $monitor->title }}</h3>
                                     <p>
+                                        @if($monitor->is_public!==false)
+                                            <span class="label label-info">公开监控</span>
+                                        @endif
                                         @if($monitor->is_enable===false)
                                             <span class="label label-warning">已停用</span>
                                         @endif

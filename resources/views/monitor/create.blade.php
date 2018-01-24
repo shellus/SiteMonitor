@@ -121,6 +121,18 @@
                             <input type="radio" name="is_enable" id="inlineRadio2" value="1" {{ $monitor->is_enable===true?"checked":"" }}{{ $monitor->id?"":"checked" }}> 是
                         </label>
                     </div>
+
+                    <div class="form-group">
+                        <label for="exampleInputEmail1">是否公开</label>
+                        <label class="radio-inline">
+                            <input type="radio" name="is_public" id="inlineRadio1" value="0" {{ $monitor->is_public===false?"checked":"" }}{{ $monitor->id?"":"checked" }}> 否
+                        </label>
+                        <label class="radio-inline">
+                            <input type="radio" name="is_public" id="inlineRadio2" value="1" {{ $monitor->is_public===true?"checked":"" }}> 是
+                        </label>
+                        公开监控后无法再转为私有
+                    </div>
+
                     <button type="submit" class="btn btn-primary">Submit</button>&nbsp;&nbsp;&nbsp;
                     <button type="button" class="btn btn-default" data-toggle="modal" data-target="#myModal">删除监控</button>
                 </form>
