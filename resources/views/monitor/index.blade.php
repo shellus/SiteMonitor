@@ -108,7 +108,10 @@
                                             <span class="label label-warning">已停用</span>
                                         @endif
                                         <span class="label label-{{ $monitor->data->lastStatusLevelLabel() }}">{{ $monitor->data->last_status_text }}</span>
-                                        {{ $monitor->request_url }}</p>
+                                    </p>
+                                    <p>
+                                        <a target="_blank" href="{{ $monitor->request_url }}">{{ str_limit($monitor->request_url,30) }}</a>
+                                    </p>
                                     <ul class="list-unstyled">
                                         <li><label>请求间隔：</label> {{ $monitor->interval_normal }} 秒</li>
                                         <li>
