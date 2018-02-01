@@ -90,6 +90,10 @@ class Snapshot extends Model
      * @throws \Exception
      */
     public function storeSnapshotResponse($userId, $response){
+        if (empty($response)){
+            return "";
+        }
+
         $date = date('Y-m-d');
         $path = "/$userId/{$this->monitor_id}/$date/{$this->id}.bin";
         if (!\Storage::disk('snapshot')->put($path, $response)){
@@ -103,7 +107,7 @@ class Snapshot extends Model
      * @throws \Exception
      */
     public function deleteResponseFile(){
-        if (!\Storage::disk('snapshot')->delete($this->response_path)){
+        if (!empty($this->response_path) && !\Storage::disk('snapshot')->delete($this->response_path)){
             throw new \Exception("Delete a file {$this->response_path} return false !");
         }
     }
