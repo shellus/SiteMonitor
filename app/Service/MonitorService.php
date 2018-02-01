@@ -247,6 +247,8 @@ class MonitorService
             /** @var Snapshot $perSnapshot */
             $perSnapshot = Snapshot::whereMonitorId($snapshot->monitor_id)->whereIsDone(1)->where('id', '<', $snapshot->id)->orderBy('id', 'desc')->firstOrFail();
             if ($perSnapshot->is_match == $snapshot->is_match && $perSnapshot->is_error == $snapshot->is_error) {
+                // 状态未变，所以不通知
+                $snapshot->is_notice = false;
                 if (!$snapshot->is_match && !$snapshot->is_error) {
                     $snapshot->status_text = "未匹配";
                     $snapshot->status_level = 0;
@@ -255,14 +257,13 @@ class MonitorService
                     $snapshot->status_text = $perSnapshot->status_text;
                     $snapshot->status_level = $perSnapshot->status_level;
                 }
-                $snapshot->is_notice = false;
             }
         } catch (ModelNotFoundException $e) {
             // 如果第一次，且没有匹配也没错误，就不通知
             if (!$snapshot->is_match && !$snapshot->is_error) {
+                $snapshot->is_notice = false;
                 $snapshot->status_text = "New";
                 $snapshot->status_level = 0;
-                $snapshot->is_notice = false;
             }
         }
 
@@ -344,9 +345,21 @@ class MonitorService
      */
     static public function handleSnapshotNotice(Snapshot $snapshot)
     {
+        if (!$snapshot->is_notice){
+            return;
+        }
+
+        if ($snapshot->monitor->no_notice_error && ($snapshot->status_text == "请求错误" || $snapshot->status_text == "错误恢复")){
+            return ;
+        }
+        if ($snapshot->monitor->no_notice_match && ($snapshot->status_text == "匹配命中" || $snapshot->status_text == "未匹配")){
+            return ;
+        }
+
         /** @var User $user */
         $user = User::findOrFail($snapshot->monitor->project->user_id);
 
-        $snapshot->is_notice && \Mail::to($user)->send(new MonitorNotice($snapshot));
+
+        \Mail::to($user)->send(new MonitorNotice($snapshot));
     }
 }

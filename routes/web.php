@@ -24,5 +24,5 @@ Route::resource('/project', 'ProjectController')->middleware('auth');
 Route::resource('/snapshot', 'SnapshotController')->middleware('auth');
 
 Route::get('/test', function () {
-return \App\User::findOrFail(4)->watchMonitors;
+
 });

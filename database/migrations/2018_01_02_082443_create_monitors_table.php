@@ -29,6 +29,8 @@ class CreateMonitorsTable extends Migration
             $table->boolean('request_nobody')->default(false); // 是否不请求body
             $table->boolean('is_enable')->default(true); // 是否启用监控
             $table->boolean('is_public')->default(false); // 是否启用监控
+            $table->boolean('no_notice_error')->default(false); // 是否不通知错误
+            $table->boolean('no_notice_match')->default(false); // 是否不通知匹配
 
             $table->unsignedInteger('interval_normal'); // 未匹配也无错误的情况下间隔秒数
             $table->unsignedInteger('interval_match'); // 匹配的情况下间隔秒数

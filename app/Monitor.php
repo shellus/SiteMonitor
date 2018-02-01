@@ -63,8 +63,28 @@ class Monitor extends Model
         'request_nobody' => 'boolean',
         'match_reverse' => 'boolean',
         'request_follow_location' => 'boolean',
+        'no_notice_error' => 'boolean',
+        'no_notice_match' => 'boolean',
     ];
-	protected $fillable = ['project_id','title','request_url','request_method','request_headers','request_body','is_enable','request_nobody','interval_normal','interval_match','interval_error','match_reverse','match_type','match_content','request_follow_location', 'is_public'];
+    protected $fillable = ['project_id',
+        'title',
+        'request_url',
+        'request_method',
+        'request_headers',
+        'request_body',
+        'is_enable',
+        'request_nobody',
+        'interval_normal',
+        'interval_match',
+        'interval_error',
+        'match_reverse',
+        'match_type',
+        'match_content',
+        'request_follow_location',
+        'is_public',
+        'no_notice_error',
+        'no_notice_match',
+        ];
 
     /**
      * 最后一个快照，如果没有快照，将抛出异常

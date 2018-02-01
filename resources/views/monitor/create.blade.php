@@ -112,25 +112,51 @@
                             <input type="radio" name="match_reverse" id="inlineRadio2" value="1" {{ $monitor->match_reverse===true?"checked":"" }}> 是
                         </label>
                     </div>
-                    <div class="form-group">
-                        <label for="exampleInputEmail1">是否启用</label>
-                        <label class="radio-inline">
-                            <input type="radio" name="is_enable" id="inlineRadio1" value="0" {{ $monitor->is_enable===false?"checked":"" }}> 否
-                        </label>
-                        <label class="radio-inline">
-                            <input type="radio" name="is_enable" id="inlineRadio2" value="1" {{ $monitor->is_enable===true?"checked":"" }}{{ $monitor->id?"":"checked" }}> 是
-                        </label>
-                    </div>
+                    <a class="btn btn-info btn-sm" role="button" data-toggle="collapse" href="#collapseExample2" aria-expanded="false" aria-controls="collapseExample">
+                        点击展开高级开关
+                        <span class="glyphicon glyphicon-chevron-down" aria-hidden="true"></span>
+                    </a>
+                    <br><br>
+                    <div class="collapse" id="collapseExample2">
 
-                    <div class="form-group">
-                        <label for="exampleInputEmail1">是否公开</label>
-                        <label class="radio-inline">
-                            <input type="radio" name="is_public" id="inlineRadio1" value="0" {{ $monitor->is_public===false?"checked":"" }}{{ $monitor->id?"":"checked" }}> 否
-                        </label>
-                        <label class="radio-inline">
-                            <input type="radio" name="is_public" id="inlineRadio2" value="1" {{ $monitor->is_public===true?"checked":"" }}> 是
-                        </label>
-                        公开监控后无法再转为私有
+                        <div class="form-group">
+                            <label for="exampleInputEmail1">是否启用</label>
+                            <label class="radio-inline">
+                                <input type="radio" name="is_enable" id="inlineRadio1" value="0" {{ $monitor->is_enable===false?"checked":"" }}> 否
+                            </label>
+                            <label class="radio-inline">
+                                <input type="radio" name="is_enable" id="inlineRadio2" value="1" {{ $monitor->is_enable===true?"checked":"" }}{{ $monitor->id?"":"checked" }}> 是
+                            </label>
+                        </div>
+                        <div class="form-group">
+                            <label for="exampleInputEmail1">不通知错误</label>
+                            <label class="radio-inline">
+                                <input type="radio" name="no_notice_error" id="inlineRadio1" value="0" {{ $monitor->no_notice_error===false?"checked":"" }}{{ $monitor->id?"":"checked" }}> 否
+                            </label>
+                            <label class="radio-inline">
+                                <input type="radio" name="no_notice_error" id="inlineRadio2" value="1" {{ $monitor->no_notice_error===true?"checked":"" }}> 是
+                            </label>
+                        </div>
+                        <div class="form-group">
+                            <label for="exampleInputEmail1">不通知匹配</label>
+                            <label class="radio-inline">
+                                <input type="radio" name="no_notice_match" id="inlineRadio1" value="0" {{ $monitor->no_notice_match===false?"checked":"" }}{{ $monitor->id?"":"checked" }}> 否
+                            </label>
+                            <label class="radio-inline">
+                                <input type="radio" name="no_notice_match" id="inlineRadio2" value="1" {{ $monitor->no_notice_match===true?"checked":"" }}> 是
+                            </label>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="exampleInputEmail1">是否公开</label>
+                            <label class="radio-inline">
+                                <input type="radio" name="is_public" id="inlineRadio1" value="0" {{ $monitor->is_public===false?"checked":"" }}{{ $monitor->id?"":"checked" }}> 否
+                            </label>
+                            <label class="radio-inline">
+                                <input type="radio" name="is_public" id="inlineRadio2" value="1" {{ $monitor->is_public===true?"checked":"" }}> 是
+                            </label>
+                            公开监控后无法再转为私有
+                        </div>
                     </div>
 
                     <button type="submit" class="btn btn-primary">Submit</button>&nbsp;&nbsp;&nbsp;

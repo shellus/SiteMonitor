@@ -101,6 +101,13 @@
                                     </p>
                                     <h3>{{ $monitor->title }}</h3>
                                     <p>
+                                        @if($monitor->no_notice_error!==false)
+                                            <span class="label label-warning" title="请求错误和错误恢复时，不会发送邮件通知">不通知错误</span>
+                                        @endif
+                                        @if($monitor->no_notice_match!==false)
+                                            <span class="label label-warning" title="命中匹配和恢复未命中时，不会发送邮件通知">不通知匹配</span>
+                                        @endif
+
                                         @if($monitor->is_public!==false)
                                             <span class="label label-info">公开监控</span>
                                         @endif
