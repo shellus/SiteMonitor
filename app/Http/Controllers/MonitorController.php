@@ -10,6 +10,67 @@ use Illuminate\Http\Request;
 
 class MonitorController extends Controller
 {
+    /**
+     * 我关注的-监控列表
+     * @param Request $request
+     * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
+     */
+    public function watchIndex(Request $request){
+        return view('monitor.watch.index', ['monitors'=>\Auth::user()->watchMonitors]);
+    }
+
+    /**
+     * post接口：取消关注
+     * @param Request $request
+     * @return \Illuminate\Http\RedirectResponse
+     */
+    public function shareCancel(Request $request){
+        $id = $request->post('id');
+        if (!is_numeric($id)){
+            abort(403);
+        }
+        $monitor = Monitor::findOrFail($id);
+
+        \Auth::user()->watchMonitors()->detach($monitor->id);
+
+        return redirect()->route('monitor.myWatch')->with('status', "取消关注监控成功");
+    }
+
+    /**
+     * post接口：关注监控
+     * @param Request $request
+     * @return \Illuminate\Http\RedirectResponse
+     */
+    public function shareWatch(Request $request){
+        $id = $request->post('id');
+        if (!is_numeric($id)){
+            abort(403);
+        }
+        /** @var Monitor $monitor */
+        $monitor = Monitor::whereIsPublic(1)->findOrFail($id);
+
+        if ($monitor->project->user_id === \Auth::id()){
+            return back()->with('status', "这是你自己的监控，无需关注");
+        }
+
+        \Auth::user()->watchMonitors()->attach($monitor->id);
+        return redirect()->route('monitor.myWatch')->with('status', "关注监控成功");
+    }
+
+    /**
+     * 分享页面
+     * @param Request $request
+     * @return |Illuminate\View\View
+     */
+    public function share(Request $request){
+        $id = $request->get('id');
+        if (!is_numeric($id)){
+            abort(403);
+        }
+        $monitor = Monitor::whereIsPublic(1)->findOrFail($id);
+
+        return view('monitor.watch.create', ['monitor'=>$monitor]);
+    }
 	/**
 	 * Display a listing of the resource.
 	 *
@@ -60,7 +121,7 @@ class MonitorController extends Controller
 	    if (!\Auth::user()->projects()->whereId($projectId)->exists()){
 		    $message = "项目ID错误，项目不存在，或不属于你";
 	    }elseif ($monitorId = $request->input('id')){
-	    	Monitor::findOrFail($monitorId)->update($commitData);
+	    	Monitor::whereUserId(\Auth::id())->findOrFail($monitorId)->update($commitData);
 		    $message = "修改监控成功";
 	    }else{
 		    MonitorService::createMonitor($commitData);
@@ -88,6 +149,9 @@ class MonitorController extends Controller
      */
     public function edit(Monitor $monitor)
     {
+        if ($monitor->user_id != \Auth::id()){
+            abort(403);
+        }
 	    $projects = \Auth::User()->projects;
 	    return view('monitor.create')->with('projects', $projects)->with('monitor', $monitor);
     }
@@ -112,6 +176,9 @@ class MonitorController extends Controller
      */
     public function destroy(Monitor $monitor)
     {
+        if ($monitor->user_id != \Auth::id()){
+            abort(403);
+        }
 	    if (MonitorService::deleteMonitor($monitor->id)){
 		    $message = '删除监控成功!';
 	    }else{

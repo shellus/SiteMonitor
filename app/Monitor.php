@@ -54,6 +54,10 @@ use Illuminate\Database\Eloquent\ModelNotFoundException;
  * @property bool $is_public
  * @property-read \Illuminate\Database\Eloquent\Collection|\App\User[] $watchUsers
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Monitor whereIsPublic($value)
+ * @property bool $no_notice_error
+ * @property bool $no_notice_match
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Monitor whereNoNoticeError($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Monitor whereNoNoticeMatch($value)
  */
 class Monitor extends Model
 {

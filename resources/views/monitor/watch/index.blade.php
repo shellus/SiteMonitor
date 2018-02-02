@@ -2,7 +2,6 @@
 
 @section('content')
     <style>
-
         .thumbnail {
             padding-left: 1em;
             padding-top: 1.5em;
@@ -25,54 +24,7 @@
     </style>
     <div class="container">
         <div class="page-header">
-            <h1>控制台 - HTTP监控</h1>
-        </div>
-        <div class="row">
-            <div class="col-md-8">
-                项目：
-                <div style="display: inline-block;" class="dropdown">
-                    <button class="btn btn-default dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
-                        {{ $project->title }}
-                        <span class="caret"></span>
-                    </button>
-                    <ul class="dropdown-menu" aria-labelledby="dropdownMenu1">
-                        @foreach($projects as $projectItem)
-                            <li><a href="{{ route('monitor.index') . "?project={$projectItem->id}" }}">{{ $projectItem->title }}</a></li>
-                        @endforeach
-                    </ul>
-                </div>
-                &nbsp;
-                <a href="{{ route('project.create') }}" data-toggle="modal" data-target="#myModal"><span class="glyphicon glyphicon-plus" aria-hidden="true"></span></a>
-                &nbsp;
-                <a href="{{ route('project.edit', $project->id) }}" data-toggle="modal" data-target="#myModal"><span class="glyphicon glyphicon-edit" aria-hidden="true"></span></a>
-                &nbsp;
-                <form id="project-destroy" style="display: inline;" action="{{ route('project.destroy', $project->id) }}" method="post">
-                    {{ csrf_field() }}
-                    {{ method_field('delete') }}
-                    <a href="#" onclick="$(this).parent().submit();return false;"><span class="glyphicon glyphicon-trash" aria-hidden="true"></span></a>
-                </form>
-            </div>
-            <div class="col-md-4">
-
-                <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
-                    <div class="modal-dialog" role="document">
-                        <div class="modal-content">
-
-                        </div>
-                    </div>
-                </div>
-
-                <div class="text-right">
-                    <a class="btn btn-success" href="{{ route('monitor.create') }}">
-                        增加监控
-                        <span class="glyphicon glyphicon-plus" aria-hidden="true"></span>
-                    </a>
-                </div>
-            </div>
-
-
-
-
+            <h1>我的关注 - HTTP监控</h1>
         </div>
         <br>
         <div class="row">
@@ -80,7 +32,44 @@
                 <div class="panel-heading">监控列表</div>
 
                 <div class="panel-body">
-                    @include('monitor.list', ['monitors'=>$project->monitors()->with('data')->get()])
+                    <div class="row">
+                        @foreach($monitors as $monitor)
+                            <div class="modal fade snapshotModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
+                                 id="snapshotModal-{{ $monitor->id }}">
+                                <div class="modal-dialog" role="document">
+                                    <div class="modal-content">
+
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="col-sm-6 col-md-4">
+                                <div class="thumbnail">
+                                    <div class="demo-container" data-flot="{{ $monitor->data->last_1hour_table_cache }}">
+                                        <div class="demo-placeholder placeholder"></div>
+                                    </div>
+                                    <p>
+                                        <a class="btn btn-default btn-sm" href="{{ route('snapshot.index')."?monitor_id=$monitor->id" }}"
+                                           data-toggle="modal" data-target="#snapshotModal-{{ $monitor->id }}">
+                                            快照列表
+                                            <span class="glyphicon glyphicon-list" aria-hidden="true"></span>
+                                        </a>
+
+                                        <form style="display: inline;" action="{{ route('monitor.CancelWatch') }}" method="post">
+                                            {{ csrf_field() }}
+                                            <input type="hidden" name="id" value="{{ $monitor->id }}">
+                                            <button class="btn btn-default btn-sm">
+                                                取消关注
+                                                <span class="glyphicon glyphicon-edit" aria-hidden="true"></span>
+                                            </button>
+                                        </form>
+                                    </p>
+                                    <h3>{{ $monitor->title }}</h3>
+                                    @include('monitor.item', ['monitor'=>$monitor, 'share'=>false])
+                                </div>
+                            </div>
+                        @endforeach
+                    </div>
                 </div>
             </div>
         </div>
@@ -110,20 +99,20 @@
         }).appendTo("body");
         $(".placeholder").bind("plothover", function (event, pos, item) {
 
-                var str = "(" + pos.x.toFixed(2) + ", " + pos.y.toFixed(2) + ")";
-                $("#hoverdata").text(str);
+            var str = "(" + pos.x.toFixed(2) + ", " + pos.y.toFixed(2) + ")";
+            $("#hoverdata").text(str);
 
-                if (item) {
-                    var x = item.datapoint[0].toFixed(2),
-                        y = item.datapoint[1].toFixed(2);
+            if (item) {
+                var x = item.datapoint[0].toFixed(2),
+                    y = item.datapoint[1].toFixed(2);
 
-                    bo=plotOptions.xaxis.tickFormatter(x, null);
-                    $("#tooltip").html(bo + " 分钟前 " + " 访问耗时" + y + "毫秒")
-                        .css({top: item.pageY-30, left: item.pageX+1})
-                        .fadeIn(200);
-                } else {
-                    $("#tooltip").hide();
-                }
+                bo=plotOptions.xaxis.tickFormatter(x, null);
+                $("#tooltip").html(bo + " 分钟前 " + " 访问耗时" + y + "毫秒")
+                    .css({top: item.pageY-30, left: item.pageX+1})
+                    .fadeIn(200);
+            } else {
+                $("#tooltip").hide();
+            }
         });
         var plotOptions = {
             series: {
@@ -162,8 +151,8 @@
                 }
                 var data = [
                     {
-                    label: "1 hours",
-                    data: d1
+                        label: "1 hours",
+                        data: d1
                     }/*,
                     {
                         label: "x轴为N分钟前",

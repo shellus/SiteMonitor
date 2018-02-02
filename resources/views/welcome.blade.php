@@ -246,7 +246,7 @@
     @if (Route::has('login'))
         <div class="top-right links">
             @auth
-                <a href="{{ route('monitor.index') }}">Monitor</a>
+                <a href="{{ route('monitor.index') }}">我的监控</a>
                 @else
                     <a href="{{ route('login') }}">登录</a>
                     <a href="{{ route('register') }}">注册</a>

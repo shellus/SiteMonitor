@@ -356,10 +356,14 @@ class MonitorService
             return ;
         }
 
+        // 给关注者们发送邮件
+        $users = $snapshot->monitor->watchUsers;
+
         /** @var User $user */
         $user = User::findOrFail($snapshot->monitor->project->user_id);
 
+        $users[]=$user;
 
-        \Mail::to($user)->send(new MonitorNotice($snapshot));
+        \Mail::to($users)->send(new MonitorNotice($snapshot));
     }
 }
